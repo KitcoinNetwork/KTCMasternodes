@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="./js/web3.min.js"></script>
+    <script type="text/javascript" src="./js/human_standard_token_abi.js"></script>
+    <script type="text/javascript" src="./js/erc20balance.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<style>
+		body {
+			/*background-image: url('./img/bg2.jpg');*/
+			background-color: #013240;
+		}
+		.header {
+			background-image: url('./img/boxhud-top.png');
+			background-repeat: no-repeat;  
+			background-size: 100%;
+			min-height: 70px;
+			width: 100%;
+			margin-bottom: -20px;
+		}
+		.footer {
+			background-image: url('./img/boxhud-bot.png');
+			background-size: 100%;
+			height: 80px;
+			width: 100%;
+		}
+		.card {
+			background: rgba(198,213,246,.1);
+			margin-bottom: 20px;
+		}
+		#tempForm {
+		    zoom: 0.8;
+			-moz-transform: scale(0.8);
+		}
+		h1 {
+			text-align: center;
+			color: #c6e7f6;
+		}
+		p {
+			color: #c6e7f6;
+		}
+		.col-centered{
+			float: none;
+			margin: 0 auto;
+		}
+		.pd-lr {
+			padding: 0 30px 0 30px;
+		}
+		.btn-ktc {
+			color: #c6e7f6;;
+		}
+		.buttonClaim {
+			background-color: white;
+			text-align: center;
+		}
+		.roundBadge {
+			border-radius: 50%;
+			width: 40px;
+			line-height: 40px;
+			border-radius: 50%;
+			text-align: center;
+			font-size: 25px;
+			
+		}
+		.btn-diamond {
+			color: #fff;
+			font-weight: bold;
+			background-color: #b9f2ff;
+			border-color: #b9f2ff;
+		}
+		.btn-platinum {
+			color: #fff;
+			font-weight: bold;
+			background-color: #e5e4e2;
+			border-color: #e5e4e2;
+		}
+		.btn-gold {
+			background-color: gold;
+			border: 2px solid gold;
+		}
+		.btn-silver {
+			background-color:  silver;
+			border: 2px solid silver;
+		}
+		.btn-copper {
+			background-color: #b87333;
+			border: 2px solid #b87333 ;
+		}
+		.crossRotate {
+			-webkit-transition-duration: 1s;
+			-moz-transition-duration: 1s;
+			-o-transition-duration: 1s;
+			transition-duration: 1s;
+			-webkit-transition-property: -webkit-transform;
+			-moz-transition-property: -moz-transform;
+			-o-transition-property: -o-transform;
+			transition-property: transform;
+		  outline: 0;
+		}
+
+		.crossRotate_focus {
+			-webkit-transform: rotate(360deg);
+			-ms-transform: rotate(360deg);
+		  transform: rotate(360deg);
+		}
+	</style>
+</head>
+<body>
+	<!-- https://github.com/shawntabrizi/ERC-20-Token-Balance -->
+	<div class="header"> </div>
+<div class="col pd-lr">
+	<h1>KTC Masternodes</h1>
+
+
+<div id="accordion">
+  <div class="card">
+    <div class="card-header" id="headingOne"  data-toggle="collapse" data-target="#collapseOne" >
+      <h5 class="mb-0">
+        <button class="btn btn-ktc" aria-expanded="true" aria-controls="collapseOne">
+           &Rightarrow; MY NODES
+        </button>
+      </h5>
+    </div>
+
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+		<div class="row">
+			<div class="col-sm-6 col-centered crossRotate"><a href="#" class="crossRotate" onclick="claimDividends(); $(parent).addClass('crossRotate_focus');"><div class="buttonClaim">Claim dividends</div></a><br>Dividends: <span id="divToClaim">#</span></div>
+			<div class="col-sm-12">
+				<table><tr>
+					<td><button type="button" class="btn btn-diamond">Diamond <span id="mynode1" class="badge">#</span></button></td>
+					
+					<!--<div class="col-sm-12"><img src="./node-badges.png" /></div>-->
+					<td><button type="button" class="btn btn-platinum">Platinum <span id="mynode2" class="badge">#</span></button></td>
+					<td><button type="button" class="btn btn-gold">Gold <span id="mynode3" class="badge">#</span></button></td>
+					<td><button type="button" class="btn btn-silver">Silver <span id="mynode4" class="badge">#</span></button></td>
+					<td><button type="button" class="btn btn-copper">Bronze <span id="mynode5" class="badge">#</span></button></td>
+				</tr></table>
+			</div>
+		</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo">
+      <h5 class="mb-0">
+        <button class="btn btn-ktc collapsed" aria-expanded="false" aria-controls="collapseTwo">
+          &Rightarrow; INVEST IN MASTERNODES
+        </button>
+      </h5>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+      <div class="card-body">
+		<input type="hidden" value="0" id="contractaddress">
+		<div class="col-sm-6">
+			<div class="row">
+				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(1);">+</a></div>
+				<div class="col-sm-6"><div class="roundBadge goldBadge">1</div></div>
+				<div class="col-sm-3"><input type="text" size="50" id="sendToAddress" value="0xD3f48e79ba37b170d2406ad8705a2B5A125EA3c0" placeholder="Transfer Masternode to this address" />
+    <button type="button" onClick="transferMasternode();">Sell Masternode</button></div>
+			</div><hr>
+			<div class="row">
+				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(2);">+</a></div>
+				<div class="col-sm-6"><div class="roundBadge silverBadge">2</div></div>
+				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(2);">-</a></div>
+			</div><hr>
+			<div class="row">
+				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(3);">+</a></div>
+				<div class="col-sm-6"><div class="roundBadge copperBadge">3</div></div>
+				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(3);">-</a></div>
+			</div><hr>
+			<div class="row">
+				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(4);">+</a></div>
+				<div class="col-sm-6"><div class="roundBadge copperBadge">4</div></div>
+				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(4);">-</a></div>
+			</div><hr>
+			<div class="row">
+				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(5);">+</a></div>
+				<div class="col-sm-6"><div class="roundBadge copperBadge">5</div></div>
+				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(5);">-</a></div>
+			</div>
+		</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingThree" data-toggle="collapse" data-target="#collapseThree">
+      <h5 class="mb-0">
+        <button class="btn  btn-ktc collapsed" aria-expanded="false" aria-controls="collapseThree">
+          &Rightarrow; NETWORK
+        </button>
+      </h5>
+    </div>
+    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+      <div class="card-body">
+		<div class="row">
+			<img src="./img/RatingIcons2.png" style="width: 100%; height: 100%;"/>
+			<table><tr>
+				<td id="tier1n">#</td>
+				<td id="tier2n">#</td>
+				<td id="tier3n">#</td>
+				<td id="tier4n">#</td>
+				<td id="tier5n">#</td>
+			</tr></table>
+		</div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+	<div id="tempForm">
+
+		<!--<p>Enter your Ethereum Address:</p>-->
+		<input type="hidden" size="50" id="address" value="0x1e81F9210adD6c747CD33490cE6Ec94226532177" />
+		<button type="button" onClick="getBalance();">Get Balance</button>
+		<p id="output"></p>
+
+		<input type="text" size="50" id="contractAddress" />
+		<button type="button" onClick="getERC20Balance();">Get ERC20 Balance</button>
+
+		<p id="output2"></p>
+		<br>
+	</div>
+
+</div>
+
+	<div class="footer"> </div>
+</body>
+</html>
