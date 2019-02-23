@@ -43,4 +43,13 @@ KTC smart contract
 		- Join/add funds   -   leave/withdraw  -  transfer share
 
 	- list my pools
+* pool tech
+	- create pool
+	- join existing pool by adding stake
+		- check it doesn't go over 10k
+		- change pool to current correct tier
+	- remove stake
+		- check pool is node a locked Tier0
+		- update pool tierLevel and balance
+	- transfer shares
 		
