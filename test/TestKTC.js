@@ -4,8 +4,10 @@ contract("KTC", accounts => {
 	const owner = accounts[0];
 	const alice = accounts[1];
 	const bob = accounts[2];
+	const charlie = accounts[3];
 	const toto = web3.utils.fromAscii('toto');
 	const tata = web3.utils.fromAscii('tata');
+	const pool3 = web3.utils.fromAscii('pool3');
 	let decimals  = 18;
 	let Kit;
 	const BN = web3.utils.BN;
@@ -114,11 +116,16 @@ contract("KTC", accounts => {
 		assert.equal ( nodeInfo[0].valueOf(), 1, "there should be one member in the new pool");
 		assert.notEqual ( nodeInfo[3].valueOf(), 0, "there should be some funds in the pool");
 		
-		var alicePools = await Kit.getMyPools.call(alice);
+		let alicePools = await Kit.getMyPools.call(alice);
+		assert.equal ( alicePools.length, 2, "Alice should belong to 2 pools now");
+		var amount = 10 ;
+		let howMuch = web3.utils.toBN(web3.utils.toWei(amount.toString(), 'ether'));
+		let aliceRemoves = await Kit.leavePool(tata, howMuch, {from: alice, gas: 200000});
+		alicePools = await Kit.getMyPools.call(alice);
 		assert.equal ( alicePools.length, 2, "Alice should belong to 2 pools now");
 	});
 	
-	it('Should list all existing pools ??', async() => {
+	it('Charlie creates a pools and removes 10 KTC from it', async() => {
 
 	});
 	

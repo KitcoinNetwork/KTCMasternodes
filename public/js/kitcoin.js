@@ -24,7 +24,9 @@ window.addEventListener('load', async () => {
 	//web3.eth.getAccounts(console.log);
 	console.log(web3.version);
 	
-
+	//TODO: run after setting contract address
+	//listMyPools();
+	document.getElementById("address").value = (await web3.eth.getAccounts())[0];
 })
 
 function connectContract(){
@@ -60,7 +62,7 @@ async function getBalance() {
         document.getElementById("output").innerHTML = error;
     }
 }
-async function getERC20Balance() {
+async function getKTCBalance() {
 	connectContract();
 	var tokenBalance = tokenContract.methods.balanceOf("0x1e81F9210adD6c747CD33490cE6Ec94226532177").call().then( (res) => {
 		document.getElementById("output2").innerHTML = res + " KTC";
@@ -86,82 +88,23 @@ async function getERC20Balance() {
 	} catch (error){
 		console.log(error);
 	}
-	
-	/* Updating my status: my masternodes */
-	var mydividends = await tokenContract.methods.showDividend("0x1e81F9210adD6c747CD33490cE6Ec94226532177", blockNumber+1).call().then((result) => {
-			$("#divToClaim").text(result);
-		}).catch((err) => {
-			$("#divToClaim").text(0);
-		});
-	var mynodes = await tokenContract.methods.showMasternode("0x1e81F9210adD6c747CD33490cE6Ec94226532177").call().then((result) => {
-		console.log(result);
-		$("#mynode1").text(result[0]);
-		$("#mynode2").text(result[1]);
-		$("#mynode3").text(result[2]);
-		$("#mynode4").text(result[3]);
-		$("#mynode5").text(result[4]);
-		
-	}).catch ((err) => {
-		console.log(err);
-	});
 
-	//tokenContract.name().then(console.log);
-    //decimals = promisify(cb => tokenContract.name.call(cb))
-    /*balance = promisify(cb => tokenContract.balanceOf(address, cb))
-    name = promisify(cb => tokenContract.name(cb))
-    symbol = promisify(cb => tokenContract.symbol(cb))*/
 
-    /*try {
-        adjustedBalance = await balance / Math.pow(10, await decimals)
-        document.getElementById("output2").innerHTML = adjustedBalance;
-        document.getElementById("output2").innerHTML += " " + await symbol + " (" + await name + ")";
-		console.log(await decimals);
-    } catch (error) {
-        document.getElementById("output2").innerHTML = error;
-    }*/
-	
+	await listMyPools();
+	$('.hidd').hide();
 
 }
 
-async function buyMasternode(tier){
-	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
-	
-	var blockNumber = await web3.eth.getBlockNumber();
-	console.log("Block number: "+blockNumber);
-	var buyNode = tokenContract.methods.buyMasternode( tier - 1 );
-	try {
-		console.log(await buyNode.send({from: myAccount, gas: 200000}));
-		getERC20Balance();
-	} catch (error){
-		console.log(error);
-	}	
-}
 
-async function sellMasternode(tier){
-	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
-	
-	var blockNumber = await web3.eth.getBlockNumber();
-	console.log("Block number: "+blockNumber);
-	var sellNode = tokenContract.methods.sellMasternode( tier - 1 );
-	try {
-		console.log(await sellNode.send({from: myAccount, gas: 200000}));
-		getERC20Balance();
-	} catch (error){
-		console.log(error);
-	}	
-}
-
-async function claimDividends(){
+async function claimDividends(poolName){
 	connectContract();
 	var myAccount = (await web3.eth.getAccounts())[0];
 	console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
-	var claim = tokenContract.methods.withdrawDividend().send({from: myAccount, gas: 200000}).then( (res) => {
-		getERC20Balance();
+	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.fromAscii(poolName)).send({from: myAccount, gas: 200000}).then( (res) => {
+		getKTCBalance();
 	}).catch( (err) => {
-		console.log(error);
+		console.log(err);
 	});
 }
 
@@ -171,11 +114,151 @@ async function transferMasternode(){
 	var sendToAddress = document.getElementById("sendToAddress").value;
 	
 	var transfer = tokenContract.methods.transferMasternode(sendToAddress).send({from: myAccount, gas: 200000}).then( (res) => {
-		getERC20Balance();
+		getKTCBalance();
 	}).catch( (err) => {
 		console.log(err);
 	});
 }
+
+async function searchPool(){
+	connectContract();
+	var myAccount = (await web3.eth.getAccounts())[0];
+	
+	var poolName = document.getElementById("searchPool").value;
+	var poolNameWeb3 = web3.utils.fromAscii(poolName);
+
+	tokenContract.methods.getPoolStatus(poolNameWeb3, myAccount).call().then( (poolInfo) => {
+		console.log(poolInfo);
+		//poolInfo: [pool's members, tierLevel, pending dividends, total balance and arg _address balance]
+		if ( poolInfo[3] == 0 ) {
+			console.log('No such pool');
+			$('#searchPoolRes').html('No such pool!');
+		}
+		else {
+			console.log("Pool: "+poolName+", Balance: "+poolInfo[3]);
+			$('#searchPoolRes').html('<div id="'+poolName+'">' +
+			'<div class="poolName">'+poolName+'</div>'+
+			'<div class="poolBalance">'+poolInfo[3]/10**18+' KTC</div>'+
+			'<div class="poolMyShare">'+poolInfo[4]/10**18+' KTC</div>'+
+			'<div class="poolAddFunds">'+
+				'<input type="text" class="'+poolName+'KTCAmount" placeholder="KTC amount" id="'+poolName+'KTCAmount">'+
+				'<input type="button" class="'+poolName+'AddAmount" value="Add Funds" onClick="addFunds(\''+poolName+'\')">'+
+				'</div></div>');
+		}
+	}).catch( (err) => {
+		console.log(error);
+	});
+}
+async function getPoolInfo(name){
+	connectContract();
+	var myAccount = (await web3.eth.getAccounts())[0];
+	
+	var poolName = web3.utils.fromAscii(name);
+	tokenContract.methods.getPoolStatus(poolName, myAccount).call().then( (poolInfo) => {
+		console.log(poolInfo);
+		//poolInfo: [pool's members, tierLevel, pending dividends, total balance and arg _address balance]
+		if ( poolInfo[3] == 0 ) console.log('No such pool');
+		else console.log("Pool: "+poolName+", Balance: "+poolInfo[3]);
+		return poolInfo;
+	}).catch( (err) => {
+		console.log(error);
+		return 
+	});
+}
+
+async function listMyPools(){
+	connectContract();
+	var myAccount = (await web3.eth.getAccounts())[0];
+
+	var myPools = await tokenContract.methods.getMyPools(myAccount).call();
+	console.log(myPools);
+	$("#poolList").empty();
+	for ( i = 0; i< myPools.length; i++){
+		console.log(myPools[i]);
+		var pool = myPools[i];
+		var poolInfo = await tokenContract.methods.getPoolStatus(pool, myAccount).call();
+		console.log(poolInfo);
+		var poolName = web3.utils.hexToUtf8(pool);
+		$('#poolTemplate').clone().attr('id',poolName).removeClass("hidd").appendTo("#poolList");
+		$('#'+poolName+' .poolBalance').html("Balance: "+poolInfo[3]/10**18 + " KTC");
+		$('#'+poolName+' .poolMyShare').html("My Share: "+poolInfo[4]/10**18 + " KTC");
+		$('#poolList').append('<div id="'+poolName+'">' +
+			'<div class="poolName">'+poolName+'</div>'+
+			'<div class="poolBalance">'+poolInfo[3]/10**18+' KTC</div>'+
+			'<div class="poolMyShare">'+poolInfo[4]/10**18+' KTC</div>'+
+			'<div class="poolAddFunds">'+
+				'<a href="#" onClick="claimDividends(\''+poolName+'\')">Claim Dividends</a> &nbsp; '+
+				'<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Add Funds</a> &nbsp; '+
+				'<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Withdraw Funds</a> &nbsp; '+
+				'<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">Transfer Funds</a><br>'+
+				'<div>'+
+				'<input type="text" class="hidd '+poolName+'KTCAmount" placeholder="KTC amount" id="'+poolName+'KTCAmount">'+
+				'<input type="button" class="hidd '+poolName+'AddAmount" value="Add Funds" onClick="addFunds(\''+poolName+'\')">'+
+				'<input type="button" class="hidd '+poolName+'RemAmount" value="Withdraw Funds" onClick="removeFunds(\''+poolName+'\')">'+
+				'<input type="button" class="hidd '+poolName+'TrfAmount" value="Transfer Funds" onClick="transferFunds(\''+poolName+'\')"><br>'+
+				'<input type="text" class="hidd '+poolName+'KTCDest" placeholder="Transfer address" id="'+poolName+'TrfFundAdd">'+
+				'</div></div></div>');
+	}
+	$('.hidd').hide();
+}
+
+async function createPool(){
+	connectContract();
+	var myAccount = (await web3.eth.getAccounts())[0];
+	var poolName = await web3.utils.utf8ToHex(document.getElementById("createPool").value);
+	console.log(poolName);
+	var create = await tokenContract.methods.createPool(poolName).send({from: myAccount, gas: 200000}).then( (result) => {
+		console.log(result);
+		listMyPools();
+		$('.hidd').hide();
+	}).catch( (err) => {
+		console.log(err);
+	});
+}
+
+
+async function addFunds(poolName){
+	connectContract();
+	var myAccount = (await web3.eth.getAccounts())[0];
+	var value = $('#'+poolName+'KTCAmount').val();
+
+	var add = await tokenContract.methods.joinPool(web3.utils.fromAscii(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
+		console.log(result);
+		listMyPools();
+	}).catch( (err) => {
+		console.log(err);
+	});
+}
+
+async function removeFunds(poolName){
+	connectContract();
+	var myAccount = (await web3.eth.getAccounts())[0];
+	var value = $('#'+poolName+'KTCAmount').val();
+
+	var add = await tokenContract.methods.leavePool(web3.utils.fromAscii(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
+		console.log(result);
+		listMyPools();
+	}).catch( (err) => {
+		console.log(err);
+	});
+}
+
+async function transferFunds(poolName){
+	connectContract();
+	var myAccount = (await web3.eth.getAccounts())[0];
+	var value = $('#'+poolName+'KTCAmount').val();
+	var toAddress = $('#'+poolName+'TrfFundAdd').val();
+	
+	var transferTo = await tokenContract.methods.transferShare(web3.utils.fromAscii(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 200000}).then( (result) => {
+		console.log(result);
+		listMyPools();
+	}).catch( (err) => {
+		console.log(err);
+	});
+}
+
+
+
 
 
 

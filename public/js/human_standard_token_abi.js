@@ -159,6 +159,49 @@ var human_standard_token_abi = [
       "constant": true,
       "inputs": [
         {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "_pools",
+      "outputs": [
+        {
+          "name": "tierLevel",
+          "type": "uint256"
+        },
+        {
+          "name": "balance",
+          "type": "uint256"
+        },
+        {
+          "name": "lastBlockNumberWithdraw",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0x414ed651"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "POOL_CREATION_COST",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0x6297bef2"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
           "name": "owner",
           "type": "address"
         }
@@ -394,50 +437,89 @@ var human_standard_token_abi = [
       "constant": false,
       "inputs": [
         {
-          "name": "buyTierLevel",
-          "type": "uint256"
+          "name": "_name",
+          "type": "bytes32"
         }
       ],
-      "name": "buyMasternode",
+      "name": "createPool",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "bytes32"
         }
       ],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function",
-      "signature": "0x6f556ea8"
+      "signature": "0xee2373e9"
     },
     {
       "constant": false,
-      "inputs": [],
-      "name": "withdrawDividend",
-      "outputs": [
+      "inputs": [
         {
-          "name": "",
+          "name": "_name",
+          "type": "bytes32"
+        },
+        {
+          "name": "value",
           "type": "uint256"
         }
       ],
+      "name": "joinPool",
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function",
-      "signature": "0x6a474002"
+      "signature": "0x5b148157"
     },
     {
       "constant": true,
       "inputs": [
         {
-          "name": "_address",
-          "type": "address"
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "name": "poolLevel",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0x7c5865aa"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "bytes32"
+        }
+      ],
+      "name": "withdrawPoolDividends",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "signature": "0xbade6dfe"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "bytes32"
         },
         {
           "name": "currentBlockNumber",
           "type": "uint256"
         }
       ],
-      "name": "showDividend",
+      "name": "showPoolDividends",
       "outputs": [
         {
           "name": "",
@@ -447,27 +529,89 @@ var human_standard_token_abi = [
       "payable": false,
       "stateMutability": "view",
       "type": "function",
-      "signature": "0xd7dcf171"
+      "signature": "0xfd0890cc"
     },
     {
       "constant": false,
       "inputs": [
         {
-          "name": "sellTierLevel",
+          "name": "_name",
+          "type": "bytes32"
+        },
+        {
+          "name": "value",
           "type": "uint256"
         }
       ],
-      "name": "sellMasternode",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "name": "leavePool",
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function",
-      "signature": "0xe5e85a02"
+      "signature": "0x4c533df0"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "bytes32"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "name": "_toAddress",
+          "type": "address"
+        }
+      ],
+      "name": "transferShare",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "signature": "0x14a6c907"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "bytes32"
+        },
+        {
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "getPoolStatus",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0xf5ea4148"
     },
     {
       "constant": true,
@@ -477,52 +621,16 @@ var human_standard_token_abi = [
           "type": "address"
         }
       ],
-      "name": "showMasternode",
+      "name": "getMyPools",
       "outputs": [
         {
           "name": "",
-          "type": "uint8"
-        },
-        {
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "name": "",
-          "type": "uint8"
+          "type": "bytes32[]"
         }
       ],
       "payable": false,
       "stateMutability": "view",
       "type": "function",
-      "signature": "0xb838f609"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_buyerAddress",
-          "type": "address"
-        }
-      ],
-      "name": "transferMasternode",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function",
-      "signature": "0xb0fa5d8c"
+      "signature": "0x0e886793"
     }
   ];

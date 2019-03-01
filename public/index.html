@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script type="text/javascript" src="./js/web3.min.js"></script>
     <script type="text/javascript" src="./js/human_standard_token_abi.js"></script>
-    <script type="text/javascript" src="./js/erc20balance.js"></script>
+    <script type="text/javascript" src="./js/kitcoin.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -106,6 +106,7 @@
 			-ms-transform: rotate(360deg);
 		  transform: rotate(360deg);
 		}
+
 	</style>
 </head>
 <body>
@@ -120,26 +121,17 @@
     <div class="card-header" id="headingOne"  data-toggle="collapse" data-target="#collapseOne" >
       <h5 class="mb-0">
         <button class="btn btn-ktc" aria-expanded="true" aria-controls="collapseOne">
-           &Rightarrow; MY NODES
+           &Rightarrow; MY POOLS
         </button>
       </h5>
     </div>
 
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
       <div class="card-body">
-		<div class="row">
-			<div class="col-sm-6 col-centered crossRotate"><a href="#" class="crossRotate" onclick="claimDividends(); $(parent).addClass('crossRotate_focus');"><div class="buttonClaim">Claim dividends</div></a><br>Dividends: <span id="divToClaim">#</span></div>
-			<div class="col-sm-12">
-				<table><tr>
-					<td><button type="button" class="btn btn-diamond">Diamond <span id="mynode1" class="badge">#</span></button></td>
-					
-					<!--<div class="col-sm-12"><img src="./node-badges.png" /></div>-->
-					<td><button type="button" class="btn btn-platinum">Platinum <span id="mynode2" class="badge">#</span></button></td>
-					<td><button type="button" class="btn btn-gold">Gold <span id="mynode3" class="badge">#</span></button></td>
-					<td><button type="button" class="btn btn-silver">Silver <span id="mynode4" class="badge">#</span></button></td>
-					<td><button type="button" class="btn btn-copper">Bronze <span id="mynode5" class="badge">#</span></button></td>
-				</tr></table>
-			</div>
+		<div class="row" id="poolList">
+			<table >
+				<tr><td>Pool #1</td></tr>
+			</table>
 		</div>
       </div>
     </div>
@@ -148,40 +140,20 @@
     <div class="card-header" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo">
       <h5 class="mb-0">
         <button class="btn btn-ktc collapsed" aria-expanded="false" aria-controls="collapseTwo">
-          &Rightarrow; INVEST IN MASTERNODES
+          &Rightarrow; POOLS
         </button>
       </h5>
     </div>
     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
       <div class="card-body">
 		<input type="hidden" value="0" id="contractaddress">
-		<div class="col-sm-6">
-			<div class="row">
-				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(1);">+</a></div>
-				<div class="col-sm-6"><div class="roundBadge goldBadge">1</div></div>
-				<div class="col-sm-3"><input type="text" size="50" id="sendToAddress" value="0xD3f48e79ba37b170d2406ad8705a2B5A125EA3c0" placeholder="Transfer Masternode to this address" />
-    <button type="button" onClick="transferMasternode();">Sell Masternode</button></div>
-			</div><hr>
-			<div class="row">
-				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(2);">+</a></div>
-				<div class="col-sm-6"><div class="roundBadge silverBadge">2</div></div>
-				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(2);">-</a></div>
-			</div><hr>
-			<div class="row">
-				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(3);">+</a></div>
-				<div class="col-sm-6"><div class="roundBadge copperBadge">3</div></div>
-				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(3);">-</a></div>
-			</div><hr>
-			<div class="row">
-				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(4);">+</a></div>
-				<div class="col-sm-6"><div class="roundBadge copperBadge">4</div></div>
-				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(4);">-</a></div>
-			</div><hr>
-			<div class="row">
-				<div class="col-sm-3"><a href="#"  onclick="buyMasternode(5);">+</a></div>
-				<div class="col-sm-6"><div class="roundBadge copperBadge">5</div></div>
-				<div class="col-sm-3"><a href="#"  onclick="sellMasternode(5);">-</a></div>
-			</div>
+		<div class="col-sm-12">
+			<input type="text" size="20" id="searchPool" />
+			<button type="button" onClick="searchPool();">Search Pool</button>
+			<div id="searchPoolRes"></div>
+			<br>
+			<input type="text" size="20" id="createPool" />Cost: 100 KTC
+			<button type="button" onClick="createPool();">Create Pool</button>
 		</div>
       </div>
     </div>
@@ -215,12 +187,12 @@
 	<div id="tempForm">
 
 		<!--<p>Enter your Ethereum Address:</p>-->
-		<input type="hidden" size="50" id="address" value="0x1e81F9210adD6c747CD33490cE6Ec94226532177" />
+		<input type="text" size="50" id="address" value="" />
 		<button type="button" onClick="getBalance();">Get Balance</button>
 		<p id="output"></p>
 
 		<input type="text" size="50" id="contractAddress" />
-		<button type="button" onClick="getERC20Balance();">Get ERC20 Balance</button>
+		<button type="button" onClick="getKTCBalance();">Get KTC Balance</button>
 
 		<p id="output2"></p>
 		<br>

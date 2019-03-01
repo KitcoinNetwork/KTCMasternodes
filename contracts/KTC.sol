@@ -80,123 +80,6 @@ contract KTC is ERC20, ERC20Detailed {
 		return balanceOf(tx.origin);
 	}*/
 	
-	/**
-	* @dev Lock 10000 KTC to buy a masternode
-	* Will lock owner tokens if masternode is registered
-	* @return True if masternode is bought and tokens are burnt, false if not
-	*/
-	function buyMasternode(uint256 buyTierLevel) public returns (bool) {
-		//fails if not enough funds
-		require ( balanceOf(tx.origin) >= tierReq[ buyTierLevel ] * (uint256(10)**uint256(decimals())) );
-		//fails if Tier1Limit is already reached
-		require ( tierNumber[ buyTierLevel ] < tierLimit[ buyTierLevel ] );
-		
-		Nodes storage senderNodes = _nodes[tx.origin];
-
-		//if user didn't have nodes before, set lastBlockNumberWithdraw to now
-		if ( countNodes(senderNodes) == 0 ){
-			senderNodes.lastBlockNumberWithdraw = block.number ;
-		}
-		else {
-			//otherwise withdraw dividends first
-			withdrawDividend();
-		}
-		
-		//Add node to sender node list and remove/burn tokens from his balance
-		senderNodes.tierNodes[buyTierLevel] = senderNodes.tierNodes[buyTierLevel] + 1;
-		tierNumber[ buyTierLevel ] = tierNumber[ buyTierLevel ] + 1;
-		_burn(tx.origin, tierReq[ buyTierLevel ] * (uint256(10)**uint256(decimals())) );
-		
-		return true;
-	}
-	
-	/** 
-	* @dev Send the dividends associated with all sender masternodes to him
-	* and update the last withdrawal
-	*/
-	function withdrawDividend() public returns (uint256) {
-		return withdrawDividends(tx.origin);
-	}
-	function withdrawDividends(address _address) private returns (uint256){
-		Nodes storage senderNodes = _nodes[_address];
-		
-		//require timestamp to be at least older than XXX == limit withdrawals interval to avoid rounding errors but we don't care if decimals = 18
-		//require ( block.number - senderNodes.lastBlockNumberWithdraw > 1440 );
-		
-		uint256 div = showDividend(tx.origin, block.number);
-		_mint(tx.origin, div);
-		senderNodes.lastBlockNumberWithdraw = block.number;
-		return div;
-	}
-	
-	/**
-	* @dev Returns the dividends currently waiting to be withdrawn
-	*/
-	function showDividend(address _address, uint256 currentBlockNumber) public view returns (uint256) {
-		//Nodes storage senderNodes = _nodes[msg.sender];
-		//if ( countNodes() == 0 ) return 0;
-		
-		//Nodes memory node = _nodes[msg.sender];
-		
-		//if lastBlockNumberWithdraw>0 that means the address owns nodes
-		if ( _nodes[_address].lastBlockNumberWithdraw > 0){
-			uint256 period = currentBlockNumber - _nodes[_address].lastBlockNumberWithdraw;
-			uint256 dividendsOwed = 0;
-			for ( uint i = 0; i < tierReq.length ; i++ ){
-				uint n =  _nodes[_address].tierNodes[i] ;
-				//since blocktime is 1 second, we approximate dirtily, keep 360 days to compensate slight overtime
-				//divide by 1000 since yield is expressed in perthousand not percent
-				dividendsOwed = dividendsOwed + n * period * (uint256(10)**uint256(decimals())) * tierYield[i] / 1000 / 360 / 86400;
-			}
-			return dividendsOwed;
-		}
-		else
-			return 0;
-	}
-	
-	
-	/**
-	* @dev 
-	*/
-	function sellMasternode(uint sellTierLevel) public returns (bool) {
-		require ( sellTierLevel > 0 );
-		Nodes storage userNodes = _nodes[tx.origin];
-		require( userNodes.tierNodes[ sellTierLevel ] > 0 );
-		
-		//withdraw and update dividend state
-		withdrawDividend();
-		
-		//User has tier node, so remove from list and update(=mint) token balance
-		userNodes.tierNodes[ sellTierLevel ] = userNodes.tierNodes[ sellTierLevel ] - 1;
-		tierNumber[ sellTierLevel ] = tierNumber[ sellTierLevel ] - 1;
-		_mint(msg.sender, tierReq[ sellTierLevel ] * (uint256(10)**uint256(decimals())) );
-		return true;
-	}
-	
-	
-	function showMasternode(address _address) public view returns (uint8, uint8, uint8, uint8, uint8) {
-		return (_nodes[_address].tierNodes[0],
-				_nodes[_address].tierNodes[1],
-				_nodes[_address].tierNodes[2],
-				_nodes[_address].tierNodes[3],
-				_nodes[_address].tierNodes[4]
-				);
-	}
-	
-	function transferMasternode(address _buyerAddress) public returns (bool){
-		Nodes storage sellerNodes = _nodes[tx.origin];
-		require( sellerNodes.tierNodes[ 0 ] > 0 );
-		//first withdraw dividends for both buyer and seller to set things straight
-		withdrawDividends(tx.origin);
-		withdrawDividends(_buyerAddress);
-		
-		Nodes storage buyerNodes = _nodes[_buyerAddress];
-		sellerNodes.tierNodes[0] = sellerNodes.tierNodes[0] - 1;
-		buyerNodes.tierNodes[0] = buyerNodes.tierNodes[0] + 1;
-		return true;
-	}
-	
-	
 	
 	/**
 	* @dev Creates a new pool with the name _name
@@ -285,21 +168,40 @@ contract KTC is ERC20, ERC20Detailed {
 		return tierReq.length;
 	}
 	
+	
 	/**
 	* @dev Distribute pool dividends to all users
 	*/
-	function withdrawPoolDividends(bytes32 _name) public  {
+	function withdrawPoolDividends(bytes32 _name) public {
 		//Pool storage p = _pools[_name];
 		if ( _pools[_name].lastBlockNumberWithdraw > 0 && _pools[_name].tierLevel < tierReq.length  ){
 			for ( uint256 i = 0; i < _pools[_name].members.length ; i++ ){
 				address memberAdd = _pools[_name].members[i];
 				uint256 period = block.number - _pools[_name].lastBlockNumberWithdraw;
 				//since blocktime is 1 second, we approximate dirtily, keep 360 days to compensate slight overtime
-				uint256 div = _pools[_name].membersStake[memberAdd] * period * (uint256(10)**uint256(decimals())) * tierYield[_pools[_name].tierLevel] / 100 / 360 / 86400;
+				uint256 div = _pools[_name].membersStake[memberAdd] * period * tierYield[_pools[_name].tierLevel] / 100 / 360 / 86400;
 				_mint(memberAdd, div );
 			}
 		}
 	}
+	
+	
+	/**
+	* @dev Shows one pool's total pending dividends
+	*/
+	function showPoolDividends(bytes32 _name, uint256 currentBlockNumber) public view returns (uint256) {
+		//if the pool exists && the tierLevel is not over the definition (currently 5)
+		if ( _pools[_name].lastBlockNumberWithdraw > 0 && _pools[_name].tierLevel < tierReq.length ){
+			uint256 period = currentBlockNumber - _pools[_name].lastBlockNumberWithdraw;
+			//since blocktime is 1 second, we approximate dirtily, keep 360 days to compensate slight overtime
+			uint256 dividendsOwed = _pools[_name].balance * period * tierYield[_pools[_name].tierLevel] / 100 / 360 / 86400;
+
+			return dividendsOwed;
+		}
+		else
+			return 0;
+	}
+	
 	
 	/**
 	* @dev Removes part or all a given stakeholder funds from a pool
@@ -316,7 +218,7 @@ contract KTC is ERC20, ERC20Detailed {
 		withdrawPoolDividends(_name);
 		
 		//if withdraw >= curent stake, remove the user completely
-		if ( p.membersStake[tx.origin] >= value ){
+		if ( value >= p.membersStake[tx.origin]  ){
 			//remove member from pool's member list & from user's pool list
 			removeFromPoolMemberList(p.members, tx.origin);
 			removeFromUserPoolList(_mypools[tx.origin].pools, _name);
@@ -330,20 +232,55 @@ contract KTC is ERC20, ERC20Detailed {
 		}
 
 		p.balance = p.balance - value;
-		
-		uint256 currentTier = p.tierLevel;
-		uint256 couldBeTier = poolLevel(p.balance);
-		if ( couldBeTier > currentTier ){
-			//if the pool changes tier (increase number, that is decrease reward), needs to update network status
-			p.tierLevel = couldBeTier;
-			//if decreased to 5 == tierNumber.length (that is, no level reached yet), then decrease corresponding tierNumber
-			if ( couldBeTier < tierNumber.length ){
-				tierNumber[couldBeTier] = tierNumber[couldBeTier] + 1;
+		if ( p.balance > 0 ){
+			uint256 currentTier = p.tierLevel;
+			uint256 couldBeTier = poolLevel(p.balance);
+			if ( couldBeTier > currentTier ){
+				//if the pool changes tier (increase number, that is decrease reward), needs to update network status
+				p.tierLevel = couldBeTier;
+				//if decreased to 5 == tierNumber.length (that is, no level reached yet), then decrease corresponding tierNumber
+				if ( couldBeTier < tierNumber.length ){
+					tierNumber[couldBeTier] = tierNumber[couldBeTier] + 1;
+				}
+				tierNumber[currentTier] = tierNumber[currentTier] - 1;
+				
 			}
-			tierNumber[currentTier] = tierNumber[currentTier] - 1;
-			
+		}
+		else {
+			delete _pools[_name];
 		}
 	}
+	
+	
+	/**
+	* @dev transfers part or totality of a user's pool funds to another address (necessary for locked pools where withdrawals are not allowed)
+	*/
+	function transferShare(bytes32 _name, uint256 value, address _toAddress) public {
+		Pool storage p = _pools[_name];
+		require ( p.membersStake[tx.origin] >= value );
+		//update pool dividends
+		withdrawPoolDividends(_name);
+		
+		//if dest isn't part of the group, add him to the group, add the group to his list
+		if ( p.membersStake[_toAddress] == 0 ){
+			p.members.push(_toAddress);
+			_mypools[_toAddress].pools.push(_name);
+		}
+		//add Balance to User
+		p.membersStake[_toAddress] = p.membersStake[_toAddress] + value;
+		
+		//remove balance from sending User
+		p.membersStake[tx.origin] = p.membersStake[tx.origin] - value;
+		
+		//if sending User has transferred his whole stake, i.e now his value in the pool is 0
+		if ( p.membersStake[tx.origin] == 0){
+			removeFromPoolMemberList(p.members, tx.origin);
+			removeFromUserPoolList(_mypools[tx.origin].pools, _name);
+		}
+		
+	}
+	
+	
 	
 	/**
 	* @dev removes an address from the address[] members list of a pool's members
@@ -361,6 +298,8 @@ contract KTC is ERC20, ERC20Detailed {
 			}
 		}
 	}
+	
+	
 	/**
 	* @dev Removes a bytes32 poolName from a user's pool list
 	*/
@@ -378,22 +317,7 @@ contract KTC is ERC20, ERC20Detailed {
 			}
 		}
 	}
-	
-	/**
-	* @dev Shows one pool's total pending dividends
-	*/
-	function showPoolDividends(bytes32 _name, uint256 currentBlockNumber) public view returns (uint256) {
-		//if the pool exists && the tierLevel is not over the definition (currently 5)
-		if ( _pools[_name].lastBlockNumberWithdraw > 0 && _pools[_name].tierLevel < tierReq.length ){
-			uint256 period = currentBlockNumber - _pools[_name].lastBlockNumberWithdraw;
-			//since blocktime is 1 second, we approximate dirtily, keep 360 days to compensate slight overtime
-			uint256 dividendsOwed = period * (uint256(10)**uint256(decimals())) * tierYield[_pools[_name].tierLevel] / 100 / 360 / 86400;
 
-			return dividendsOwed;
-		}
-		else
-			return 0;
-	}
 	
 	/**
 	* @dev Get information about a pool that _address belongs to
