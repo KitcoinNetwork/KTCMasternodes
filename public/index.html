@@ -11,7 +11,8 @@
 	<style>
 		body {
 			/*background-image: url('./img/bg2.jpg');*/
-			background-color: #013240;
+			/*background-color: #013240;*/
+			background-color: #f4f3ef;
 		}
 		.header {
 			background-image: url('./img/boxhud-top.png');
@@ -37,7 +38,10 @@
 		}
 		h1 {
 			text-align: center;
-			color: #c6e7f6;
+			color: #646361;
+		}
+		h4 {
+			color: #646361;
 		}
 		p {
 			color: #c6e7f6;
@@ -106,83 +110,114 @@
 			-ms-transform: rotate(360deg);
 		  transform: rotate(360deg);
 		}
+		.whiteball {
+			background-color: white;
+		}
+
+		.nav-item{
+			border: 1px solid #bfbfbf;
+			border-radius: .3rem;
+			box-shadow: 1px 1px 1px #bfbfbf;
+		}
+		.top {
+			padding: 10px 0 10px 0;
+			/*border-bottom: 1px solid gray;*/
+			box-shadow: 0px 2px 2px #bfbfbf;
+		}
+		.dashboard-container {
+			border-radius: .3rem;
+			border: 1px solid #bfbfbf;
+			background-color: white;
+			box-shadow: 0px 2px 2px #bfbfbf;
+			vertical-align: middle;
+			padding: 20px 20px 20px 20px;
+			margin-bottom: 20px;
+		}
+		.mh-15{
+			min-height: 155px;
+		}
+		.poolName {
+			font-size: 1.5rem;
+			color: #646361;
+		}
+		.poolLogo {
+			width: 64px;
+			height: 64px;
+		}
+		.networkTable {
+			text-align: center;
+			width: 20%;	
+		}
 
 	</style>
 </head>
 <body>
 	<!-- https://github.com/shawntabrizi/ERC-20-Token-Balance -->
-	<div class="header"> </div>
+	<!-- https://www.ign.com/wikis/realm-royale/Rankings -->
+	<!-- <div class="header"> </div>-->
+	<div class="top whiteball">
+		<h1>KTC Masternodes</h1>
+	</div>
 <div class="col pd-lr">
-	<h1>KTC Masternodes</h1>
+<ul class="nav nav-pills mb-4 mt-4 nav-fill" id="pills-tab" role="tablist">
+  <li class="nav-item mr-4">
+    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">My Pools</a>
+  </li>
+  <li class="nav-item mr-4">
+    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Pools</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Network</a>
+  </li>
+</ul>
 
-
-<div id="accordion">
-  <div class="card">
-    <div class="card-header" id="headingOne"  data-toggle="collapse" data-target="#collapseOne" >
-      <h5 class="mb-0">
-        <button class="btn btn-ktc" aria-expanded="true" aria-controls="collapseOne">
-           &Rightarrow; MY POOLS
-        </button>
-      </h5>
-    </div>
-
-    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
-		<div class="row" id="poolList">
-			<table >
-				<tr><td>Pool #1</td></tr>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+	<div id="poolList">
+			<div class="dashboard-container mh-15">
+				<div style="padding-top: 40px; text-align: center;">
+					You are not in a pool<br><a href="#" onclick="$('#pills-profile-tab').tab('show')">Join a Pool</a>
+				</div>
+			</div>
+		</div>
+  </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+	<input type="hidden" value="0" id="contractaddress">
+	<div>
+		<div class="dashboard-container">
+			<h4>Create a new pool</h4>
+			Cost: 100 KTC
+			<div class="form-inline ">
+				<input type="text" class="form-control mr-2 col" size="20" id="createPool" placeholder="Pool Name"/>
+				<button type="button" class="btn btn-primary" onClick="createPool();">Create Pool</button>
+			</div>
+		</div>
+		<div class="dashboard-container">
+			<h4>Search for a pool</h4>
+			<div class="form-inline ">
+				<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="Pool Name" />
+				<button type="button" class="btn btn-primary" onClick="searchPool();">Search Pool</button>
+			</div>
+			<div id="searchPoolRes"></div>
+		</div>
+	</div>
+  </div>
+  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+	<div class="col-sm-12 dashboard-container">
+			<h4>Pools</h4>
+			<table width="100%">
+			<tr>
+				<td class="networkTable"><img src="img/Icon_Rank_0.png" class="poolLogo"/><br><div id="tier1n">#</div></td>
+				<td class="networkTable"><img src="img/Icon_Rank_1.png" class="poolLogo"/><br><div id="tier2n">#</div></td>
+				<td class="networkTable"><img src="img/Icon_Rank_2.png" class="poolLogo"/><br><div id="tier3n">#</div></td>
+				<td class="networkTable"><img src="img/Icon_Rank_3.png" class="poolLogo"/><br><div id="tier4n">#</div></td>
+				<td class="networkTable"><img src="img/Icon_Rank_4.png" class="poolLogo"/><br><div id="tier5n">#</div></td>
+			</tr>
 			</table>
 		</div>
-      </div>
-    </div>
   </div>
-  <div class="card">
-    <div class="card-header" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo">
-      <h5 class="mb-0">
-        <button class="btn btn-ktc collapsed" aria-expanded="false" aria-controls="collapseTwo">
-          &Rightarrow; POOLS
-        </button>
-      </h5>
-    </div>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-      <div class="card-body">
-		<input type="hidden" value="0" id="contractaddress">
-		<div class="col-sm-12">
-			<input type="text" size="20" id="searchPool" />
-			<button type="button" onClick="searchPool();">Search Pool</button>
-			<div id="searchPoolRes"></div>
-			<br>
-			<input type="text" size="20" id="createPool" />Cost: 100 KTC
-			<button type="button" onClick="createPool();">Create Pool</button>
-		</div>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" id="headingThree" data-toggle="collapse" data-target="#collapseThree">
-      <h5 class="mb-0">
-        <button class="btn  btn-ktc collapsed" aria-expanded="false" aria-controls="collapseThree">
-          &Rightarrow; NETWORK
-        </button>
-      </h5>
-    </div>
-    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-      <div class="card-body">
-		<div class="row">
-			<img src="./img/RatingIcons2.png" style="width: 100%; height: 100%;"/>
-			<table><tr>
-				<td id="tier1n">#</td>
-				<td id="tier2n">#</td>
-				<td id="tier3n">#</td>
-				<td id="tier4n">#</td>
-				<td id="tier5n">#</td>
-			</tr></table>
-		</div>
-      </div>
-    </div>
-  </div>
-  
 </div>
+<br><hr><br>
 
 	<div id="tempForm">
 
@@ -200,6 +235,7 @@
 
 </div>
 
-	<div class="footer"> </div>
+	<!--<div class="footer"> </div>-->
+
 </body>
 </html>

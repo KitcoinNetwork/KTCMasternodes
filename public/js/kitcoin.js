@@ -101,7 +101,7 @@ async function claimDividends(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
-	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.fromAscii(poolName)).send({from: myAccount, gas: 200000}).then( (res) => {
+	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 200000}).then( (res) => {
 		getKTCBalance();
 	}).catch( (err) => {
 		console.log(err);
@@ -125,7 +125,7 @@ async function searchPool(){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	
 	var poolName = document.getElementById("searchPool").value;
-	var poolNameWeb3 = web3.utils.fromAscii(poolName);
+	var poolNameWeb3 = web3.utils.utf8ToHex(poolName);
 
 	tokenContract.methods.getPoolStatus(poolNameWeb3, myAccount).call().then( (poolInfo) => {
 		console.log(poolInfo);
@@ -136,24 +136,40 @@ async function searchPool(){
 		}
 		else {
 			console.log("Pool: "+poolName+", Balance: "+poolInfo[3]);
-			$('#searchPoolRes').html('<div id="'+poolName+'">' +
-			'<div class="poolName">'+poolName+'</div>'+
-			'<div class="poolBalance">'+poolInfo[3]/10**18+' KTC</div>'+
-			'<div class="poolMyShare">'+poolInfo[4]/10**18+' KTC</div>'+
-			'<div class="poolAddFunds">'+
-				'<input type="text" class="'+poolName+'KTCAmount" placeholder="KTC amount" id="'+poolName+'KTCAmount">'+
-				'<input type="button" class="'+poolName+'AddAmount" value="Add Funds" onClick="addFunds(\''+poolName+'\')">'+
-				'</div></div>');
+			$('#searchPoolRes').html('<hr><div id="'+poolName+'" class="poolContainer">'+
+				poolContainer(poolName, poolInfo[0], poolInfo[3]/10**18, poolInfo[4]/10**18, poolInfo[1])+
+				( ( poolInfo[1]>0) ? '<div class="poolAddFunds">'+
+				'<div class="form-inline ">'+
+				'<input type="text" class="form-control mr-2 col '+poolName+'KTCAmount" placeholder="KTC amount" id="'+poolName+'KTCAmount">'+
+				'<input type="button" class="btn btn-primary '+poolName+'AddAmount" value="Add Funds" onClick="addFunds(\''+poolName+'\')">'+
+				'</div></div>' : ' ')+
+			'</div>');
 		}
 	}).catch( (err) => {
 		console.log(error);
 	});
 }
+
+
+function poolContainer(poolName, members, balance, balanceUser, tier){
+	var tierDisplay = parseInt(tier) + 1;
+	var code = '<table width="100%"><tr><td><div class="poolName">&#9935; '+poolName+'</div>'+
+			'<div class="poolBalance">Balance: '+balance+' KTC</div>'+
+			'<div class="poolMyShare">My Share: '+balanceUser+' KTC</div>'+
+			'<div class="poolMembers">Members: '+members+' </div></td>'+
+			'<td width="35%" style="text-align: center;"><img class="poolLogo" src="img/Icon_Rank_'+tier+'.png" /><br>'+
+			((tier == 0)?"Masternode" : ((tier == 5)? "No Tier" : "Tier "+tierDisplay ) )+
+			'</td></tr></table>';
+	return code;
+}
+
+
+
 async function getPoolInfo(name){
 	connectContract();
 	var myAccount = (await web3.eth.getAccounts())[0];
 	
-	var poolName = web3.utils.fromAscii(name);
+	var poolName = web3.utils.utf8ToHex(name);
 	tokenContract.methods.getPoolStatus(poolName, myAccount).call().then( (poolInfo) => {
 		console.log(poolInfo);
 		//poolInfo: [pool's members, tierLevel, pending dividends, total balance and arg _address balance]
@@ -179,28 +195,23 @@ async function listMyPools(){
 		var poolInfo = await tokenContract.methods.getPoolStatus(pool, myAccount).call();
 		console.log(poolInfo);
 		var poolName = web3.utils.hexToUtf8(pool);
-		$('#poolTemplate').clone().attr('id',poolName).removeClass("hidd").appendTo("#poolList");
-		$('#'+poolName+' .poolBalance').html("Balance: "+poolInfo[3]/10**18 + " KTC");
-		$('#'+poolName+' .poolMyShare').html("My Share: "+poolInfo[4]/10**18 + " KTC");
-		$('#poolList').append('<div id="'+poolName+'">' +
-			'<div class="poolName">'+poolName+'</div>'+
-			'<div class="poolBalance">'+poolInfo[3]/10**18+' KTC</div>'+
-			'<div class="poolMyShare">'+poolInfo[4]/10**18+' KTC</div>'+
+		$('#poolList').append('<div id="'+poolName+'" class="poolContainer dashboard-container">' +
+			poolContainer(poolName, poolInfo[0], poolInfo[3]/10**18, poolInfo[4]/10**18, poolInfo[1])+
 			'<div class="poolAddFunds">'+
 				'<a href="#" onClick="claimDividends(\''+poolName+'\')">Claim Dividends</a> &nbsp; '+
-				'<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Add Funds</a> &nbsp; '+
-				'<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Withdraw Funds</a> &nbsp; '+
-				'<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">Transfer Funds</a><br>'+
-				'<div>'+
-				'<input type="text" class="hidd '+poolName+'KTCAmount" placeholder="KTC amount" id="'+poolName+'KTCAmount">'+
-				'<input type="button" class="hidd '+poolName+'AddAmount" value="Add Funds" onClick="addFunds(\''+poolName+'\')">'+
-				'<input type="button" class="hidd '+poolName+'RemAmount" value="Withdraw Funds" onClick="removeFunds(\''+poolName+'\')">'+
-				'<input type="button" class="hidd '+poolName+'TrfAmount" value="Transfer Funds" onClick="transferFunds(\''+poolName+'\')"><br>'+
-				'<input type="text" class="hidd '+poolName+'KTCDest" placeholder="Transfer address" id="'+poolName+'TrfFundAdd">'+
-				'</div></div></div>');
+				''+
+				((poolInfo[1] > 0) ? '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Add Funds</a> &nbsp; <a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Withdraw Funds</a> &nbsp; ' : '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">Transfer Funds</a><br>')+
+				''+
+				'<form class="form-inline mt-2"><input type="text" class="form-control col mr-2 mb-1 hidd '+poolName+'KTCAmount" placeholder="KTC amount" id="'+poolName+'KTCAmount">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'AddAmount" value="Add Funds" onClick="addFunds(\''+poolName+'\')">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'RemAmount" value="Withdraw Funds" onClick="removeFunds(\''+poolName+'\')">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'TrfAmount" value="Transfer Funds" onClick="transferFunds(\''+poolName+'\')">'+
+				'<input type="text" class="form-control hidd col-12 '+poolName+'KTCDest" placeholder="Transfer address" id="'+poolName+'TrfFundAdd">'+
+				'</form></div></div>');
 	}
 	$('.hidd').hide();
 }
+
 
 async function createPool(){
 	connectContract();
@@ -222,7 +233,7 @@ async function addFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
-	var add = await tokenContract.methods.joinPool(web3.utils.fromAscii(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
+	var add = await tokenContract.methods.joinPool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
 		console.log(result);
 		listMyPools();
 	}).catch( (err) => {
@@ -235,7 +246,7 @@ async function removeFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
-	var add = await tokenContract.methods.leavePool(web3.utils.fromAscii(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
+	var add = await tokenContract.methods.leavePool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
 		console.log(result);
 		listMyPools();
 	}).catch( (err) => {
@@ -249,7 +260,7 @@ async function transferFunds(poolName){
 	var value = $('#'+poolName+'KTCAmount').val();
 	var toAddress = $('#'+poolName+'TrfFundAdd').val();
 	
-	var transferTo = await tokenContract.methods.transferShare(web3.utils.fromAscii(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 200000}).then( (result) => {
+	var transferTo = await tokenContract.methods.transferShare(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 200000}).then( (result) => {
 		console.log(result);
 		listMyPools();
 	}).catch( (err) => {
