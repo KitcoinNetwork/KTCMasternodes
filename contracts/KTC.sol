@@ -117,13 +117,21 @@ contract KTC is ERC20, ERC20Detailed {
 	/**
 	* @dev Join a pool or increase pool share
 	*/
-	function joinPool(bytes32 _name, uint256 value) public  {
+	function joinPool(bytes32 _name, uint256 _value) public  {
 		Pool storage p = _pools[_name];
 		//check that pool exists && not a tier 0 pool
 		require ( p.lastBlockNumberWithdraw != 0 && p.tierLevel != 0 );
-
-		//check if allowed: TODO does not overflow max pool stake && pool not already tier0
-		require ( p.tierLevel != 0 );
+		//can't add less than 1KTC to a pool
+		require ( _value >= uint256(10)**uint256(decimals()) );
+		
+		//does not overflow max pool stake: update value to be the remainder if  pool.balance +_value > tierReq[0]
+		uint256 maxRemainder = tierReq[0] * 10**uint256(decimals()) - p.balance;
+		uint256 value = 0;
+		if ( maxRemainder > _value ){
+			value = _value;
+		} else {
+			value = maxRemainder;
+		}
 		
 		//update pool dividends
 		withdrawPoolDividends(_name);

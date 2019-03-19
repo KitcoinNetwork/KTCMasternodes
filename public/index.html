@@ -2,6 +2,36 @@
 <html>
 <head>
     <meta charset="UTF-8">
+	<script type="text/javascript">
+		window.lang = {
+			"balance": "Balance",
+			"myshare": "My Share",
+			"members": "Members",
+			"claimdividends": "Claim Dividends",
+			"transferfunds": "Transfer Funds",
+			"addfunds": "Add Funds",
+			"withdrawfunds": "Withdraw Funds",
+			"mypools": "My Pools",
+			"pools": "Pools",
+			"pool": "Pool",
+			"masternode": "Masternode",
+			"tier": "Tier",
+			"notier": "No Tier",
+			"nosuchpool": "No Such Pool!",
+			"ktcamount": "KTC Amount",
+			"ktcamountmin1": "KTC Amount (min: 1 KTC)",
+			"youareinpool": "You are already in this pool: ",
+			"seemypools": "See my pools",
+			"errorCreatingPool": "<strong>Error</strong>: Check your KTC balance or that the pools doesn't already exists",
+			"successCreatingPool": "<strong>Success</strong>: Pool created",
+			"successAddingFunds": "<strong>Success</strong> adding funds",
+			"errorAddingFunds": "<strong>Error</strong> adding funds: minimum 1 KTC",
+			"successWithdrawingFunds": "<strong>Success</strong> withdrawing funds",
+			"errorWithdrawingFunds": "<strong>Error</strong> withdrawing funds",
+			"successDividends": "<strong>Success</strong> withdrawing funds",
+			"errorDividends": "<strong>Error</strong> withdrawing funds"
+		}
+	</script>
     <script type="text/javascript" src="./js/web3.min.js"></script>
     <script type="text/javascript" src="./js/human_standard_token_abi.js"></script>
     <script type="text/javascript" src="./js/kitcoin.js"></script>
@@ -10,9 +40,7 @@
 	<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<style>
 		body {
-			/*background-image: url('./img/bg2.jpg');*/
-			/*background-color: #013240;*/
-			background-color: #f4f3ef;
+			background-color: #f2f2f4/*#f4f3ef;*/
 		}
 		.header {
 			background-image: url('./img/boxhud-top.png');
@@ -42,9 +70,6 @@
 		}
 		h4 {
 			color: #646361;
-		}
-		p {
-			color: #c6e7f6;
 		}
 		.col-centered{
 			float: none;
@@ -148,6 +173,17 @@
 			text-align: center;
 			width: 20%;	
 		}
+		.nav-link {
+			background-color: white;
+		}
+		.faq-header {
+			padding: 0px;
+			text-align: left;
+		}
+		.faq-content {
+			text-align: left;
+			padding: 0.5rem;
+		}
 
 	</style>
 </head>
@@ -156,18 +192,22 @@
 	<!-- https://www.ign.com/wikis/realm-royale/Rankings -->
 	<!-- <div class="header"> </div>-->
 	<div class="top whiteball">
-		<h1>KTC Masternodes</h1>
+		<h1>KTC Masternodes<a href="index-cn.html"><img style="float:right; margin-right: 10px; margin-top: 18px;" src="img/china-flag.png"></a></h1>
 	</div>
+
 <div class="col pd-lr">
 <ul class="nav nav-pills mb-4 mt-4 nav-fill" id="pills-tab" role="tablist">
-  <li class="nav-item mr-4">
+  <li class="nav-item mr-3">
     <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">My Pools</a>
   </li>
-  <li class="nav-item mr-4">
+  <li class="nav-item mr-3">
     <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Pools</a>
   </li>
-  <li class="nav-item">
+  <li class="nav-item mr-3">
     <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Network</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-faq" role="tab" aria-controls="pills-faq" aria-selected="false">FAQ</a>
   </li>
 </ul>
 
@@ -184,7 +224,7 @@
   <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
 	<input type="hidden" value="0" id="contractaddress">
 	<div>
-		<div class="dashboard-container">
+		<div id="createAPool" class="dashboard-container">
 			<h4>Create a new pool</h4>
 			Cost: 100 KTC
 			<div class="form-inline ">
@@ -192,7 +232,7 @@
 				<button type="button" class="btn btn-primary" onClick="createPool();">Create Pool</button>
 			</div>
 		</div>
-		<div class="dashboard-container">
+		<div id="searchAPool" class="dashboard-container">
 			<h4>Search for a pool</h4>
 			<div class="form-inline ">
 				<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="Pool Name" />
@@ -216,6 +256,60 @@
 			</table>
 		</div>
   </div>
+  <div class="tab-pane fade" id="pills-faq" role="tabpanel" aria-labelledby="pills-faq-tab">
+	<div id="poolList">
+			<div class="dashboard-container mh-15">
+				<h4>FAQ</h4>
+				<div style="padding-top: 40px; text-align: center;">
+					<div id="accordion">
+					  <div class="card">
+						<div class="card-header faq-header" id="headingOne">
+						  <h5 class="mb-0">
+							<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							  1. Question1
+							</button>
+						  </h5>
+						</div>
+
+						<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+						  <div class="card-body faq-content">
+							Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+						  </div>
+						</div>
+					  </div>
+					  <div class="card">
+						<div class="card-header faq-header" id="headingTwo">
+						  <h5 class="mb-0">
+							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							  2. Question2
+							</button>
+						  </h5>
+						</div>
+						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+						  <div class="card-body faq-content">
+							Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+						  </div>
+						</div>
+					  </div>
+					  <div class="card">
+						<div class="card-header faq-header" id="headingThree">
+						  <h5 class="mb-0">
+							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+							  3. Question3
+							</button>
+						  </h5>
+						</div>
+						<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+						  <div class="card-body faq-content">
+							Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+						  </div>
+						</div>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
 </div>
 <br><hr><br>
 
@@ -234,8 +328,6 @@
 	</div>
 
 </div>
-
-	<!--<div class="footer"> </div>-->
 
 </body>
 </html>
