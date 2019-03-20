@@ -212,7 +212,9 @@ async function listMyPools(){
 			'<div class="poolAddFunds">'+
 				'<a href="#" onClick="claimDividends(\''+poolName+'\')">'+window.lang["claimdividends"]+'</a> &nbsp; '+
 				''+
-				((poolInfo[1] > 0) ? '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["addfunds"]+'</a> &nbsp; <a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["withdrawfunds"]+'</a> &nbsp; ' : '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">'+window.lang["transferfunds"]+'</a><br>')+
+				((poolInfo[1] > 0) ? 
+					( (poolInfo[3]/10**18 < 10000) ? '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["addfunds"]+'</a> &nbsp;' : '') + ' <a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["withdrawfunds"]+'</a> &nbsp; '
+					: '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">'+window.lang["transferfunds"]+'</a><br>')+
 				''+
 				'<form class="form-inline mt-2"><input type="text" class="form-control col mr-2 mb-1 hidd '+poolName+'KTCAmount" placeholder="'+window.lang["ktcamount"]+'" id="'+poolName+'KTCAmount">'+
 				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'AddAmount" value="'+window.lang["addfunds"]+'" onClick="addFunds(\''+poolName+'\')">'+

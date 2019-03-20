@@ -17,7 +17,7 @@ contract KTC is ERC20, ERC20Detailed {
 	uint256[5] public tierLimit = [ 101, 1000000, 1000000, 1000000, 10000000];
 	uint256[5] public tierNumber = [ 0, 0, 0, 0, 0];
 	//Yields in percent
-	uint256[5] public tierYield  = [ 20, 13, 10, 7, 5];
+	uint256[5] public tierYield  = [ 20, 10, 8, 6, 5];
 	
 	uint256 public constant POOL_CREATION_COST = 100;
 	
