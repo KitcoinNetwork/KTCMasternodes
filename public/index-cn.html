@@ -139,11 +139,22 @@
 		.whiteball {
 			background-color: white;
 		}
-
-		.nav-item{
+		.nav-pill-k {
 			border: 1px solid #bfbfbf;
-			border-radius: .3rem;
 			box-shadow: 1px 1px 1px #bfbfbf;
+		}
+		.nav-item {
+			border-radius: .3rem;
+		}
+		.nav-link-tab {
+			border: 1px solid #bfbfbf !important;
+		}
+		.nav-tabs .nav-link.active {
+			border-bottom: none !important;
+			border-color: #dee2e6 #dee2e6 #fff;
+		}
+		.nav-tabs .nav-item {
+			margin-bottom: -2px;
 		}
 		.top {
 			padding: 10px 0 10px 0;
@@ -197,121 +208,316 @@
 	</div>
 
 <div class="col pd-lr">
-<ul class="nav nav-pills mb-4 mt-4 nav-fill" id="pills-tab" role="tablist">
-  <li class="nav-item mr-3">
-    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">我的节点</a>
-  </li>
-  <li class="nav-item mr-3">
-    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">节点</a>
-  </li>
-  <li class="nav-item mr-3">
-    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">网络</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-faq" role="tab" aria-controls="pills-faq" aria-selected="false">常问问题</a>
-  </li>
-</ul>
+	<ul class="nav nav-pills mb-4 mt-4 nav-fill" id="pills-tab" role="tablist">
+	  <li class="nav-item nav-pill-k mr-3">
+		<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">我的节点</a>
+	  </li>
+	  <li class="nav-item nav-pill-k mr-3">
+		<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">节点</a>
+	  </li>
+	  <li class="nav-item nav-pill-k mr-3">
+		<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">网络</a>
+	  </li>
+	  <li class="nav-item nav-pill-k ">
+		<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-faq" role="tab" aria-controls="pills-faq" aria-selected="false">常见问题</a>
+	  </li>
+	</ul>
 
-<div class="tab-content" id="pills-tabContent">
-  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-	<div id="poolList">
-			<div class="dashboard-container mh-15">
-				<div style="padding-top: 40px; text-align: center;">
-					你不存在节点<br><a href="#" onclick="$('#pills-profile-tab').tab('show')">参加节点</a>
-				</div>
-			</div>
-		</div>
-  </div>
-  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-	<input type="hidden" value="0" id="contractaddress">
-	<div>
-		<div id="createAPool" class="dashboard-container">
-			<h4>建立节点</h4>
-			起码: 100 KTC
-			<div class="form-inline ">
-				<input type="text" class="form-control mr-2 col" size="20" id="createPool" placeholder="节点名字"/>
-				<button type="button" class="btn btn-primary" onClick="createPool();">建立节点</button>
-			</div>
-		</div>
-		<div id="searchAPool" class="dashboard-container">
-			<h4>找节点</h4>
-			<div class="form-inline ">
-				<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="节点名字" />
-				<button type="button" class="btn btn-primary" onClick="searchPool();">找节点</button>
-			</div>
-			<div id="searchPoolRes"></div>
-		</div>
-	</div>
-  </div>
-  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-	<div class="col-sm-12 dashboard-container">
-			<h4>节点</h4>
-			<table width="100%">
-			<tr>
-				<td class="networkTable"><img src="img/Icon_Rank_0.png" class="poolLogo"/><br><div id="tier1n">#</div></td>
-				<td class="networkTable"><img src="img/Icon_Rank_1.png" class="poolLogo"/><br><div id="tier2n">#</div></td>
-				<td class="networkTable"><img src="img/Icon_Rank_2.png" class="poolLogo"/><br><div id="tier3n">#</div></td>
-				<td class="networkTable"><img src="img/Icon_Rank_3.png" class="poolLogo"/><br><div id="tier4n">#</div></td>
-				<td class="networkTable"><img src="img/Icon_Rank_4.png" class="poolLogo"/><br><div id="tier5n">#</div></td>
-			</tr>
-			</table>
-		</div>
-  </div>
-  <div class="tab-pane fade" id="pills-faq" role="tabpanel" aria-labelledby="pills-faq-tab">
-	<div id="poolList">
-			<div class="dashboard-container mh-15">
-				<h4>常问问题</h4>
-				<div style="padding-top: 40px; text-align: center;">
-					<div id="accordion">
-					  <div class="card">
-						<div class="card-header faq-header" id="headingOne">
-						  <h5 class="mb-0">
-							<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-							  1. Question1
-							</button>
-						  </h5>
-						</div>
-
-						<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-						  <div class="card-body faq-content">
-							Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
-						  </div>
-						</div>
-					  </div>
-					  <div class="card">
-						<div class="card-header faq-header" id="headingTwo">
-						  <h5 class="mb-0">
-							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-							  2. Question2
-							</button>
-						  </h5>
-						</div>
-						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-						  <div class="card-body faq-content">
-							Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
-						  </div>
-						</div>
-					  </div>
-					  <div class="card">
-						<div class="card-header faq-header" id="headingThree">
-						  <h5 class="mb-0">
-							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-							  3. Question3
-							</button>
-						  </h5>
-						</div>
-						<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-						  <div class="card-body faq-content">
-							Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
-						  </div>
-						</div>
-					  </div>
+	<div class="tab-content" id="pills-tabContent">
+	  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+		<div id="poolList">
+				<div class="dashboard-container mh-15">
+					<div style="padding-top: 40px; text-align: center;">
+						你不存在节点<br><a href="#" onclick="$('#pills-profile-tab').tab('show')">参加节点</a>
 					</div>
 				</div>
 			</div>
+	  </div>
+	  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+		<input type="hidden" value="0" id="contractaddress">
+		<div>
+			<div id="createAPool" class="dashboard-container">
+				<h4>建立节点</h4>
+				起码: 100 KTC
+				<div class="form-inline ">
+					<input type="text" class="form-control mr-2 col" size="20" id="createPool" placeholder="节点名字"/>
+					<button type="button" class="btn btn-primary" onClick="createPool();">建立节点</button>
+				</div>
+			</div>
+			<div id="searchAPool" class="dashboard-container">
+				<h4>找节点</h4>
+				<div class="form-inline ">
+					<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="节点名字" />
+					<button type="button" class="btn btn-primary" onClick="searchPool();">找节点</button>
+				</div>
+				<div id="searchPoolRes"></div>
+			</div>
 		</div>
-  </div>
-</div>
+	  </div>
+	  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+		<div class="col-sm-12 dashboard-container">
+				<h4>节点</h4>
+				<table width="100%">
+				<tr>
+					<td class="networkTable"><img src="img/Icon_Rank_0.png" class="poolLogo"/><br><div id="tier1n">#</div></td>
+					<td class="networkTable"><img src="img/Icon_Rank_1.png" class="poolLogo"/><br><div id="tier2n">#</div></td>
+					<td class="networkTable"><img src="img/Icon_Rank_2.png" class="poolLogo"/><br><div id="tier3n">#</div></td>
+					<td class="networkTable"><img src="img/Icon_Rank_3.png" class="poolLogo"/><br><div id="tier4n">#</div></td>
+					<td class="networkTable"><img src="img/Icon_Rank_4.png" class="poolLogo"/><br><div id="tier5n">#</div></td>
+				</tr>
+				</table>
+			</div>
+	  </div>
+	  <div class="tab-pane fade" id="pills-faq" role="tabpanel" aria-labelledby="pills-faq-tab">
+		<div id="poolList">
+			<ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+			  <li class="nav-item">
+				<a class="nav-link active nav-link-tab" id="faq1-tab" data-toggle="tab" href="#faq1" role="tab" aria-controls="faq1" aria-selected="true">常见问题</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link nav-link-tab" id="faq2-tab" data-toggle="tab" href="#faq2" role="tab" aria-controls="faq2" aria-selected="false">新手入门</a>
+			  </li>
+
+			</ul>
+		<div class="tab-content" id="myTabContent">
+		  <div class="tab-pane fade show active dashboard-container" id="faq1" role="tabpanel" aria-labelledby="home-tab" style="border-radius: 0 0 0.3rem 0.3rem; border-top: none;">
+			<div style="padding-top: 40px; text-align: center;">
+				<div id="accordion">
+				  <div class="card">
+					<div class="card-header faq-header" id="headingOne">
+					  <h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+						  1. 什么是节点？
+						</button>
+					  </h5>
+					</div>
+
+					<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						大家可以理解为—拥有特殊权利的Kitcoin家庭成员。节点的权利就是公开、透明地分配链上的资产。
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingTwo">
+					  <h5 class="mb-0">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+						  2. 为什么需要使用游利钱包加入到节点？
+						</button>
+					  </h5>
+					</div>
+					<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						将KTC充币到游利钱包让KTC转到区块链地址。<br>
+						已上区块链的KTC都可以转入到节点。
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingThree">
+					  <h5 class="mb-0">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse3" aria-expanded="false" aria-controls="collapseThree">
+						  3. 收益是每年固定的吗？还是递增？
+						</button>
+					  </h5>
+					</div>
+					<div id="collapse3" class="collapse" aria-labelledby="heading3" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						每个节点的收益率是每年固定，采用智能合约自动分发。节点的收益随时都可以领取，收益全部都是KTC活币。
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingThree">
+					  <h5 class="mb-0">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapseThree">
+						  4. 会收服务费吗？
+						</button>
+					  </h5>
+					</div>
+					<div id="collapse4" class="collapse" aria-labelledby="heading4" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						平台本身不收服务费，但是在充币或提币的时候会有ZXT 为燃料费，费用很低，一个ZXT可以用很多次哦！
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingThree">
+					  <h5 class="mb-0">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse5" aria-expanded="false" aria-controls="collapseThree">
+						  5. 主节点跟普通节点的区别是什么？
+						</button>
+					  </h5>
+					</div>
+					<div id="collapse5" class="collapse" aria-labelledby="heading5" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						首先，主节点数量恒定，而普通节点数量不设上限；其次，主节点一旦满10000KTC不可以撤销，币也无法撤回，而普通节点随时可以撤回KTC；最重要的是，主节点的奖励的KTC活币比普通节点高很多。
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingThree">
+					  <h5 class="mb-0">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse6" aria-expanded="false" aria-controls="collapseThree">
+						  6.可以将币转给某个领导，他帮忙申请节点吗？
+						</button>
+					  </h5>
+					</div>
+					<div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordion">
+					  <div class="card-body faq-content">节点中每个人是按自己加入的份额获得相应比例的奖励。所有的节点都可以自己加入拼节点或者创建，不需要通过别人的账户。
+					  如果您将币转给别人，您的资产安全和节点收益将无法保障。
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingThree">
+					  <h5 class="mb-0">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse7" aria-expanded="false" aria-controls="collapseThree">
+						  7. 提现到错误地址怎么办？
+						</button>
+					  </h5>
+					</div>
+					<div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordion">
+					  <div class="card-body faq-content">
+					  一旦您点击提现，系统将自动进入提币流程，无法中止。由于区块链地址的匿名性，我们无法找到对方，也就无法帮您找回失去的币。
+					  所以一定要再三确认地址的正确性。
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingThree">
+					  <h5 class="mb-0">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse8" aria-expanded="false" aria-controls="collapseThree">
+						  8. 充值到交易所以外的错误地址怎么办?
+						</button>
+					  </h5>
+					</div>
+					<div id="collapse8" class="collapse" aria-labelledby="heading8" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						如果您的币充值到错误的地址，平台将无法收到对应的区块链资产，由于区块链的匿名性，因此无法帮助您找回，建议通过其他方式找到对应地址的所有者协商找回。
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	
+	  <div class="tab-pane fade dashboard-container" id="faq2" role="tabpanel" aria-labelledby="profile-tab" style="border-radius: 0 0 0.3rem 0.3rem; border-top: none;">
+		<div style="padding-top: 40px; text-align: center;">
+				<div id="accordion2">
+				  <div class="card">
+					<div class="card-header faq-header" id="headingFaq2-1">
+					  <h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#FAQ2-1" aria-expanded="true" aria-controls="FAQ2-1">
+						  1.钱包如何充值？
+						</button>
+					  </h5>
+					</div>
+					</div>
+					<div id="FAQ2-1" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						首先，需要交易所APP更新到最新版本；<br>
+						然后，进入首页—点击快速充币—页面自动跳转到交易所提币页面—输入提币数量和备注即可。
+						<img src="img/FAQ/faq1.png" style="width: 100%;" />
+						<img src="img/FAQ/faq2.png" style="width: 100%;" />
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingFaq2-2">
+					  <h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#FAQ2-2" aria-expanded="true" aria-controls="FAQ2-2">
+						  2.钱包如何提现？
+						</button>
+					  </h5>
+					</div>
+
+					<div id="FAQ2-2" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						首先，还是需要交易所APP更新到最新版本；<br>
+						然后，进入首页—点击提币--页面自动跳转到交易所充币页面—点击确定--输入提币数量，点击转账即可。
+						<img src="img/FAQ/faq3.png" style="width: 100%;" />
+						<img src="img/FAQ/faq4.png" style="width: 100%;" />
+						<img src="img/FAQ/faq5.png" style="width: 100%;" />
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingFaq2-3">
+					  <h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#FAQ2-3" aria-expanded="true" aria-controls="FAQ2-3">
+						  3. 如何成为节点？
+						</button>
+					  </h5>
+					</div>
+
+					<div id="FAQ2-3" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						如果是自己创建节点，需要钱包余额不少于100KTC，然后进入“节点”—“创建节点”即可，如图中红框所示；<br>
+						如果是加入别人的节点，只需要进入节点页面之后，“搜索节点”，如图中绿框所示，然后申请加入，按提示转入KTC即可。
+						<img src="img/FAQ/faq6.png" style="width: 100%;" />
+
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingFaq2-4">
+					  <h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#FAQ2-4" aria-expanded="true" aria-controls="FAQ2-4">
+						  4. 如何退出节点？
+						</button>
+					  </h5>
+					</div>
+
+					<div id="FAQ2-4" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						这里分两种情况：<br>
+						1） 主节点：如果您是加入的101个主节点，已转入资产才不能转出，但是自己的份额全部可以转让给别人（点击红色框内的按钮），就可以退出了<br>
+						2） 其他节点：撤回您的币即可退出（点击绿色框内的按钮）
+						<img src="img/FAQ/faq7.png" style="width: 100%;" />
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingFaq2-5">
+					  <h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#FAQ2-5" aria-expanded="true" aria-controls="FAQ2-5">
+						  5. 如何提取节点奖励？
+						</button>
+					  </h5>
+					</div>
+
+					<div id="FAQ2-5" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						在“我的节点”中，点击节点下方的“提取分红”（红色框内的按钮），奖励KTC活币就会直接发放到您的钱包账户。
+						<img src="img/FAQ/faq8.png" style="width: 100%;" />
+					  </div>
+					</div>
+				  </div>
+				  <div class="card">
+					<div class="card-header faq-header" id="headingFaq2-6">
+					  <h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#FAQ2-6" aria-expanded="true" aria-controls="FAQ2-6">
+						  6. 可以改变自己的份额吗？
+						</button>
+					  </h5>
+					</div>
+
+					<div id="FAQ2-6" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					  <div class="card-body faq-content">
+						1）增加份额：在节点余币还没有到上限时，可以一直往里面增币（点击红色框内按钮）；<br>2）减少份额：可以随时点击“撤回资金”（绿色框内按钮）减少您的所占份额，可以部分或全部撤回。<br>注意：主节点在没满10000KTC之前，可以随时撤回，满了10000KTC之后不能撤币，但是可以把您的份额转让给别人（点击黄色框内转让）。
+						<img src="img/FAQ/faq9.png" style="width: 100%;" />
+					  </div>
+					</div>
+				  </div>
+				  
+				</div>
+			</div>
+  
+
+		</div>
+	  </div>
+	</div>
 <br><hr><br>
 
 	<div id="tempForm">
