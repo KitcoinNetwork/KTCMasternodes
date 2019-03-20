@@ -4,33 +4,33 @@
     <meta charset="UTF-8">
 	<script type="text/javascript">
 		window.lang = {
-			"balance": "Balance",
-			"myshare": "My Share",
-			"members": "Members",
-			"claimdividends": "Claim Dividends",
-			"transferfunds": "Transfer Funds",
-			"transferaddress": "Transfer Address",
-			"addfunds": "Add Funds",
-			"withdrawfunds": "Withdraw Funds",
-			"mypools": "My Pools",
-			"pools": "Pools",
-			"pool": "Pool",
-			"masternode": "Masternode",
-			"tier": "Tier",
-			"notier": "No Tier",
-			"nosuchpool": "No Such Pool!",
-			"ktcamount": "KTC Amount",
-			"ktcamountmin1": "KTC Amount (min: 1 KTC)",
-			"youareinpool": "You are already in this pool: ",
-			"seemypools": "See my pools",
-			"errorCreatingPool": "<strong>Error</strong>: Check your KTC balance or that the pools doesn't already exists",
-			"successCreatingPool": "<strong>Success</strong>: Pool created",
-			"successAddingFunds": "<strong>Success</strong> adding funds",
-			"errorAddingFunds": "<strong>Error</strong> adding funds: minimum 1 KTC",
-			"successWithdrawingFunds": "<strong>Success</strong> withdrawing funds",
-			"errorWithdrawingFunds": "<strong>Error</strong> withdrawing funds",
-			"successDividends": "<strong>Success</strong> withdrawing funds",
-			"errorDividends": "<strong>Error</strong> withdrawing funds"
+			"balance": "余额",
+			"myshare": "我的份",
+			"members": "会员",
+			"claimdividends": "收益",
+			"transferfunds": "转币",
+			"transferaddress": "接收地址",
+			"addfunds": "加币",
+			"withdrawfunds": "提币",
+			"mypools": "我的节点",
+			"pools": "节点",
+			"pool": "节点",
+			"masternode": "超节点",
+			"tier": "阶段",
+			"notier": "无段",
+			"nosuchpool": "这个节点不存在",
+			"ktcamount": "K商品量",
+			"ktcamountmin1": "K商品量 (起码: 1 KTC)",
+			"youareinpool": "你已经属于那个节点: ",
+			"seemypools": "去我的节点",
+			"errorCreatingPool": "<strong>错误</strong>: 检查您的K商品够而且节点不已经存在",
+			"successCreatingPool": "<strong>成功</strong>: 节点建立了",
+			"successAddingFunds": "<strong>成功</strong> 在节点上充币了",
+			"errorAddingFunds": "<strong>错误</strong> 充币起码: 1 KTC",
+			"successWithdrawingFunds": "<strong>成功</strong> 提币",
+			"errorWithdrawingFunds": "<strong>错误</strong> 提币失败了",
+			"successDividends": "<strong>成功</strong> 收益了",
+			"errorDividends": "<strong>错误</strong> 收益失败了"
 		}
 	</script>
     <script type="text/javascript" src="./js/web3.min.js"></script>
@@ -193,22 +193,22 @@
 	<!-- https://www.ign.com/wikis/realm-royale/Rankings -->
 	<!-- <div class="header"> </div>-->
 	<div class="top whiteball">
-		<h1>KTC Masternodes<a href="index-cn.html"><img style="float:right; margin-right: 10px; margin-top: 18px;" src="img/china-flag.png"></a></h1>
+		<h1>KTC 节点<a href="index.html"><img style="float:right; margin-right: 10px; margin-top: 18px;" src="img/usa-flag.png"></a></h1>
 	</div>
 
 <div class="col pd-lr">
 <ul class="nav nav-pills mb-4 mt-4 nav-fill" id="pills-tab" role="tablist">
   <li class="nav-item mr-3">
-    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">My Pools</a>
+    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">我的节点</a>
   </li>
   <li class="nav-item mr-3">
-    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Pools</a>
+    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">节点</a>
   </li>
   <li class="nav-item mr-3">
-    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Network</a>
+    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">网络</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-faq" role="tab" aria-controls="pills-faq" aria-selected="false">FAQ</a>
+    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-faq" role="tab" aria-controls="pills-faq" aria-selected="false">常问问题</a>
   </li>
 </ul>
 
@@ -217,7 +217,7 @@
 	<div id="poolList">
 			<div class="dashboard-container mh-15">
 				<div style="padding-top: 40px; text-align: center;">
-					You are not in a pool<br><a href="#" onclick="$('#pills-profile-tab').tab('show')">Join a Pool</a>
+					你不存在节点<br><a href="#" onclick="$('#pills-profile-tab').tab('show')">参加节点</a>
 				</div>
 			</div>
 		</div>
@@ -226,18 +226,18 @@
 	<input type="hidden" value="0" id="contractaddress">
 	<div>
 		<div id="createAPool" class="dashboard-container">
-			<h4>Create a new pool</h4>
-			Cost: 100 KTC
+			<h4>建立节点</h4>
+			起码: 100 KTC
 			<div class="form-inline ">
-				<input type="text" class="form-control mr-2 col" size="20" id="createPool" placeholder="Pool Name"/>
-				<button type="button" class="btn btn-primary" onClick="createPool();">Create Pool</button>
+				<input type="text" class="form-control mr-2 col" size="20" id="createPool" placeholder="节点名字"/>
+				<button type="button" class="btn btn-primary" onClick="createPool();">建立节点</button>
 			</div>
 		</div>
 		<div id="searchAPool" class="dashboard-container">
-			<h4>Search for a pool</h4>
+			<h4>找节点</h4>
 			<div class="form-inline ">
-				<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="Pool Name" />
-				<button type="button" class="btn btn-primary" onClick="searchPool();">Search Pool</button>
+				<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="节点名字" />
+				<button type="button" class="btn btn-primary" onClick="searchPool();">找节点</button>
 			</div>
 			<div id="searchPoolRes"></div>
 		</div>
@@ -245,7 +245,7 @@
   </div>
   <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
 	<div class="col-sm-12 dashboard-container">
-			<h4>Pools</h4>
+			<h4>节点</h4>
 			<table width="100%">
 			<tr>
 				<td class="networkTable"><img src="img/Icon_Rank_0.png" class="poolLogo"/><br><div id="tier1n">#</div></td>
@@ -260,7 +260,7 @@
   <div class="tab-pane fade" id="pills-faq" role="tabpanel" aria-labelledby="pills-faq-tab">
 	<div id="poolList">
 			<div class="dashboard-container mh-15">
-				<h4>FAQ</h4>
+				<h4>常问问题</h4>
 				<div style="padding-top: 40px; text-align: center;">
 					<div id="accordion">
 					  <div class="card">

@@ -210,15 +210,15 @@ async function listMyPools(){
 		$('#poolList').append('<div id="'+poolName+'" class="poolContainer dashboard-container">' +
 			poolContainer(poolName, poolInfo[0], poolInfo[3]/10**18, poolInfo[4]/10**18, poolInfo[1])+
 			'<div class="poolAddFunds">'+
-				'<a href="#" onClick="claimDividends(\''+poolName+'\')">Claim Dividends</a> &nbsp; '+
+				'<a href="#" onClick="claimDividends(\''+poolName+'\')">'+window.lang["claimdividends"]+'</a> &nbsp; '+
 				''+
-				((poolInfo[1] > 0) ? '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Add Funds</a> &nbsp; <a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">Withdraw Funds</a> &nbsp; ' : '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">Transfer Funds</a><br>')+
+				((poolInfo[1] > 0) ? '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["addfunds"]+'</a> &nbsp; <a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["withdrawfunds"]+'</a> &nbsp; ' : '<a href="#" onClick="$(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">'+window.lang["transferfunds"]+'</a><br>')+
 				''+
-				'<form class="form-inline mt-2"><input type="text" class="form-control col mr-2 mb-1 hidd '+poolName+'KTCAmount" placeholder="KTC amount" id="'+poolName+'KTCAmount">'+
-				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'AddAmount" value="Add Funds" onClick="addFunds(\''+poolName+'\')">'+
-				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'RemAmount" value="Withdraw Funds" onClick="removeFunds(\''+poolName+'\')">'+
-				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'TrfAmount" value="Transfer Funds" onClick="transferFunds(\''+poolName+'\')">'+
-				'<input type="text" class="form-control hidd col-12 '+poolName+'KTCDest" placeholder="Transfer address" id="'+poolName+'TrfFundAdd">'+
+				'<form class="form-inline mt-2"><input type="text" class="form-control col mr-2 mb-1 hidd '+poolName+'KTCAmount" placeholder="'+window.lang["ktcamount"]+'" id="'+poolName+'KTCAmount">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'AddAmount" value="'+window.lang["addfunds"]+'" onClick="addFunds(\''+poolName+'\')">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'RemAmount" value="'+window.lang["transferfunds"]+'" onClick="removeFunds(\''+poolName+'\')">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'TrfAmount" value="'+window.lang["transferfunds"]+'" onClick="transferFunds(\''+poolName+'\')">'+
+				'<input type="text" class="form-control hidd col-12 '+poolName+'KTCDest" placeholder="'+window.lang["transferaddress"]+'"," id="'+poolName+'TrfFundAdd">'+
 				'</form></div></div>');
 	}
 	$('.hidd').hide();
