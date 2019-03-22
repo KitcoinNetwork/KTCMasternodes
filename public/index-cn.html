@@ -59,7 +59,7 @@
 		<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">节点</a>
 	  </li>
 	  <li class="nav-item nav-pill-k mr-3">
-		<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">网络</a>
+		<a class="nav-link" id="pills-network-tab" data-toggle="pill" href="#pills-network" role="tab" aria-controls="pills-contact" aria-selected="false">网络</a>
 	  </li>
 	  <li class="nav-item nav-pill-k ">
 		<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-faq" role="tab" aria-controls="pills-faq" aria-selected="false">常见问题</a>
@@ -97,7 +97,7 @@
 			</div>
 		</div>
 	  </div>
-	  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+	  <div class="tab-pane fade" id="pills-network" role="tabpanel" aria-labelledby="pills-contact-tab">
 		<div class="col-sm-12 dashboard-container">
 				<h4>节点</h4>
 				<table width="100%">
@@ -125,7 +125,7 @@
 		<div class="tab-content" id="myTabContent">
 		  <div class="tab-pane fade show active dashboard-container" id="faq1" role="tabpanel" aria-labelledby="home-tab" style="border-radius: 0 0 0.3rem 0.3rem; border-top: none;">
 			<div style="padding-top: 40px; text-align: center;">
-				<div id="accordion">
+				<div id="accordion" class="accordion">
 				  <div class="card">
 					<div class="card-header faq-header" id="headingOne">
 					  <h5 class="mb-0">
@@ -157,9 +157,9 @@
 					</div>
 				  </div>
 				  <div class="card">
-					<div class="card-header faq-header" id="headingThree">
+					<div class="card-header faq-header" id="heading3">
 					  <h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse3" aria-expanded="false" aria-controls="collapseThree">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
 						  3. 收益是每年固定的吗？还是递增？
 						</button>
 					  </h5>
@@ -171,9 +171,9 @@
 					</div>
 				  </div>
 				  <div class="card">
-					<div class="card-header faq-header" id="headingThree">
+					<div class="card-header faq-header" id="heading4">
 					  <h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapseThree">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
 						  4. 会收服务费吗？
 						</button>
 					  </h5>
@@ -185,9 +185,9 @@
 					</div>
 				  </div>
 				  <div class="card">
-					<div class="card-header faq-header" id="headingThree">
+					<div class="card-header faq-header" id="heading5">
 					  <h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse5" aria-expanded="false" aria-controls="collapseThree">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
 						  5. 主节点跟普通节点的区别是什么？
 						</button>
 					  </h5>
@@ -199,9 +199,9 @@
 					</div>
 				  </div>
 				  <div class="card">
-					<div class="card-header faq-header" id="headingThree">
+					<div class="card-header faq-header" id="heading6">
 					  <h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse6" aria-expanded="false" aria-controls="collapseThree">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
 						  6.可以将币转给某个领导，他帮忙申请节点吗？
 						</button>
 					  </h5>
@@ -213,9 +213,9 @@
 					</div>
 				  </div>
 				  <div class="card">
-					<div class="card-header faq-header" id="headingThree">
+					<div class="card-header faq-header" id="heading7">
 					  <h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse7" aria-expanded="false" aria-controls="collapseThree">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
 						  7. 提现到错误地址怎么办？
 						</button>
 					  </h5>
@@ -228,9 +228,9 @@
 					</div>
 				  </div>
 				  <div class="card">
-					<div class="card-header faq-header" id="headingThree">
+					<div class="card-header faq-header" id="heading8">
+						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse8" aria-expanded="false" aria-controls="collapse8">
 					  <h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse8" aria-expanded="false" aria-controls="collapseThree">
 						  8. 充值到交易所以外的错误地址怎么办?
 						</button>
 					  </h5>
@@ -247,7 +247,7 @@
 	
 	  <div class="tab-pane fade dashboard-container" id="faq2" role="tabpanel" aria-labelledby="profile-tab" style="border-radius: 0 0 0.3rem 0.3rem; border-top: none;">
 		<div style="padding-top: 40px; text-align: center;">
-				<div id="accordion2">
+				<div id="accordion2" class="accordion">
 				  <div class="card">
 					<div class="card-header faq-header" id="headingFaq2-1">
 					  <h5 class="mb-0">
@@ -257,12 +257,12 @@
 					  </h5>
 					</div>
 					</div>
-					<div id="FAQ2-1" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					<div id="FAQ2-1" class="collapse" aria-labelledby="headingFaq2-1" data-parent="#accordion2">
 					  <div class="card-body faq-content">
 						首先，需要交易所APP更新到最新版本；<br>
 						然后，进入首页—点击快速充币—页面自动跳转到交易所提币页面—输入提币数量和备注即可。
-						<img src="img/FAQ/faq1.png" style="width: 100%;" />
-						<img src="img/FAQ/faq2.png" style="width: 100%;" />
+						<img src="img/FAQ/faq1-cn.png" style="width: 100%;" />
+						<img src="img/FAQ/faq2-cn.png" style="width: 100%;" />
 					  </div>
 					</div>
 				  </div>
@@ -275,13 +275,13 @@
 					  </h5>
 					</div>
 
-					<div id="FAQ2-2" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					<div id="FAQ2-2" class="collapse" aria-labelledby="headingFaq2-2" data-parent="#accordion2">
 					  <div class="card-body faq-content">
 						首先，还是需要交易所APP更新到最新版本；<br>
 						然后，进入首页—点击提币--页面自动跳转到交易所充币页面—点击确定--输入提币数量，点击转账即可。
-						<img src="img/FAQ/faq3.png" style="width: 100%;" />
-						<img src="img/FAQ/faq4.png" style="width: 100%;" />
-						<img src="img/FAQ/faq5.png" style="width: 100%;" />
+						<img src="img/FAQ/faq3-cn.png" style="width: 100%;" />
+						<img src="img/FAQ/faq4-cn.png" style="width: 100%;" />
+						<img src="img/FAQ/faq5-cn.png" style="width: 100%;" />
 					  </div>
 					</div>
 				  </div>
@@ -294,11 +294,11 @@
 					  </h5>
 					</div>
 
-					<div id="FAQ2-3" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					<div id="FAQ2-3" class="collapse" aria-labelledby="headingFaq2-3" data-parent="#accordion2">
 					  <div class="card-body faq-content">
 						如果是自己创建节点，需要钱包余额不少于100KTC，然后进入“节点”—“创建节点”即可，如图中红框所示；<br>
 						如果是加入别人的节点，只需要进入节点页面之后，“搜索节点”，如图中绿框所示，然后申请加入，按提示转入KTC即可。
-						<img src="img/FAQ/faq6.png" style="width: 100%;" />
+						<img src="img/FAQ/faq6-cn.png" style="width: 100%;" />
 
 					  </div>
 					</div>
@@ -312,12 +312,12 @@
 					  </h5>
 					</div>
 
-					<div id="FAQ2-4" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					<div id="FAQ2-4" class="collapse" aria-labelledby="headingFaq2-4" data-parent="#accordion2">
 					  <div class="card-body faq-content">
 						这里分两种情况：<br>
 						1） 主节点：如果您是加入的101个主节点，已转入资产才不能转出，但是自己的份额全部可以转让给别人（点击红色框内的按钮），就可以退出了<br>
 						2） 其他节点：撤回您的币即可退出（点击绿色框内的按钮）
-						<img src="img/FAQ/faq7.png" style="width: 100%;" />
+						<img src="img/FAQ/faq7-cn.png" style="width: 100%;" />
 					  </div>
 					</div>
 				  </div>
@@ -330,10 +330,10 @@
 					  </h5>
 					</div>
 
-					<div id="FAQ2-5" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					<div id="FAQ2-5" class="collapse" aria-labelledby="headingFaq2-5" data-parent="#accordion2">
 					  <div class="card-body faq-content">
 						在“我的节点”中，点击节点下方的“提取分红”（红色框内的按钮），奖励KTC活币就会直接发放到您的钱包账户。
-						<img src="img/FAQ/faq8.png" style="width: 100%;" />
+						<img src="img/FAQ/faq8-cn.png" style="width: 100%;" />
 					  </div>
 					</div>
 				  </div>
@@ -346,10 +346,10 @@
 					  </h5>
 					</div>
 
-					<div id="FAQ2-6" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+					<div id="FAQ2-6" class="collapse" aria-labelledby="headingFaq2-6" data-parent="#accordion2">
 					  <div class="card-body faq-content">
 						1）增加份额：在节点余币还没有到上限时，可以一直往里面增币（点击红色框内按钮）；<br>2）减少份额：可以随时点击“撤回资金”（绿色框内按钮）减少您的所占份额，可以部分或全部撤回。<br>注意：主节点在没满10000KTC之前，可以随时撤回，满了10000KTC之后不能撤币，但是可以把您的份额转让给别人（点击黄色框内转让）。
-						<img src="img/FAQ/faq9.png" style="width: 100%;" />
+						<img src="img/FAQ/faq9-cn.png" style="width: 100%;" />
 					  </div>
 					</div>
 				  </div>
