@@ -4,30 +4,30 @@
     <meta charset="UTF-8">
 	<script type="text/javascript">
 		window.lang = {
-			"balance": "余额",
-			"myshare": "我的份",
-			"members": "会员",
-			"claimdividends": "收益",
-			"transferfunds": "转币",
-			"transferaddress": "接收地址",
-			"addfunds": "加币",
-			"withdrawfunds": "提币",
+			"balance": "现有KTC数量",
+			"myshare": "自己所占份额",
+			"members": "节点成员数量",
+			"claimdividends": "提取分红",
+			"transferfunds": "转让份额",
+			"transferaddress": "转让地址",
+			"addfunds": "增加份额",
+			"withdrawfunds": "撤回份额",
 			"mypools": "我的节点",
 			"pools": "节点",
 			"pool": "节点",
-			"masternode": "超节点",
+			"masternode": "主节点",
 			"tier": "层级",
-			"notier": "无段",
-			"nosuchpool": "这个节点不存在",
-			"ktcamount": "K商品量",
-			"ktcamountmin1": "K商品量 (起码: 1 KTC)",
-			"youareinpool": "您已经加入了那个节点: ",
-			"seemypools": "去我的节点",
-			"errorCreatingPool": "<strong>错误</strong>: 检查您的K商品够而且节点不已经存在",
-			"successCreatingPool": "<strong>成功</strong>: 节点建立了",
-			"successAddingFunds": "<strong>成功</strong> 在节点上充币了",
-			"errorAddingFunds": "<strong>错误</strong> 充币起码: 1 KTC",
-			"successWithdrawingFunds": "<strong>成功</strong> 提币",
+			"notier": "无级",
+			"nosuchpool": "您未加入节点",
+			"ktcamount": "KTC数量",
+			"ktcamountmin1": "KTC数量 (底限为: 1 KTC)",
+			"youareinpool": "你已加入节点: ",
+			"seemypools": "返回我的节点",
+			"errorCreatingPool": "<strong>错误</strong>: 您KTC余额不够或节点名字已存在",
+			"successCreatingPool": "<strong>成功</strong>: 节点创建已成功",
+			"successAddingFunds": "<strong>成功</strong> 节点加币已成功",
+			"errorAddingFunds": "<strong>未成功：</strong> 充币底限余额为 1 KTC",
+			"successWithdrawingFunds": "提币 <strong>成功</strong>",
 			"errorWithdrawingFunds": "<strong>错误</strong> 提币失败了",
 			"successDividends": "<strong>成功</strong> 收益了",
 			"errorDividends": "<strong>错误</strong> 收益失败了"
@@ -56,10 +56,10 @@
 		<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">我的节点</a>
 	  </li>
 	  <li class="nav-item nav-pill-k mr-3">
-		<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">输入节点</a>
+		<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">节点</a>
 	  </li>
 	  <li class="nav-item nav-pill-k mr-3">
-		<a class="nav-link" id="pills-network-tab" data-toggle="pill" href="#pills-network" role="tab" aria-controls="pills-contact" aria-selected="false">节点网络</a>
+		<a class="nav-link" id="pills-network-tab" data-toggle="pill" href="#pills-network" role="tab" aria-controls="pills-contact" aria-selected="false">全网节点</a>
 	  </li>
 	  <li class="nav-item nav-pill-k ">
 		<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-faq" role="tab" aria-controls="pills-faq" aria-selected="false">常见问题</a>
@@ -71,7 +71,7 @@
 		<div id="poolList">
 				<div class="dashboard-container mh-15">
 					<div style="padding-top: 40px; text-align: center;">
-						您未加入节点<br><a href="#" onclick="$('#pills-profile-tab').tab('show')">加入节点</a>
+						您未加入节点未<br><a href="#" onclick="$('#pills-profile-tab').tab('show')">加入节点</a>
 					</div>
 				</div>
 			</div>
@@ -80,17 +80,17 @@
 		<input type="hidden" value="0" id="contractaddress">
 		<div>
 			<div id="createAPool" class="dashboard-container">
-				<h4>建立节点</h4>
-				起码: 100 KTC
+				<h4>创建节点</h4>
+				最低限额： 100 KTC
 				<div class="form-inline ">
-					<input type="text" class="form-control mr-2 col" size="20" id="createPool" placeholder="输入节点名字"/>
-					<button type="button" class="btn btn-primary" onClick="createPool();">建立节点</button>
+					<input type="text" class="form-control mr-2 col" size="20" id="createPool" placeholder="输入节点名称"/>
+					<button type="button" class="btn btn-primary" onClick="createPool();">创建节点</button>
 				</div>
 			</div>
 			<div id="searchAPool" class="dashboard-container">
-				<h4>搜素节点</h4>
+				<h4>加入节点</h4>
 				<div class="form-inline ">
-					<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="输入节点名字" />
+					<input type="text" class="form-control col mr-2" size="20" id="searchPool" placeholder="输入节点名称" />
 					<button type="button" class="btn btn-primary" onClick="searchPool();">搜素节点</button>
 				</div>
 				<div id="searchPoolRes"></div>
