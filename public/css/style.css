@@ -1,5 +1,6 @@
 		body {
-			background-color: #f2f2f4/*#f4f3ef;*/
+			background-color: #f2f2f4/*#f4f3ef;*/;
+			font-size: 2rem;
 		}
 		.header {
 			background-image: url('./img/boxhud-top.png');
@@ -15,6 +16,12 @@
 			height: 80px;
 			width: 100%;
 		}
+		.flag {
+			float:right;
+			margin-right: 3rem;
+			margin-top: 1.7rem;
+			min-height: 2.5rem;
+		}
 		.card {
 			background: rgba(198,213,246,.1);
 			margin-bottom: 20px;
@@ -24,11 +31,14 @@
 			-moz-transform: scale(0.8);
 		}
 		h1 {
+			font-size: 4.5rem;
 			text-align: center;
 			color: #646361;
 		}
 		h4 {
 			color: #646361;
+			font-size: 3.5rem;
+			margin-bottom: 2rem;
 		}
 		.col-centered{
 			float: none;
@@ -36,6 +46,12 @@
 		}
 		.pd-lr {
 			padding: 0 30px 0 30px;
+		}
+		.btn {
+			font-size: 2rem;
+		}
+		.form-control {
+			font-size: 2rem;
 		}
 		.btn-ktc {
 			color: #c6e7f6;;
@@ -53,47 +69,7 @@
 			font-size: 25px;
 			
 		}
-		.btn-diamond {
-			color: #fff;
-			font-weight: bold;
-			background-color: #b9f2ff;
-			border-color: #b9f2ff;
-		}
-		.btn-platinum {
-			color: #fff;
-			font-weight: bold;
-			background-color: #e5e4e2;
-			border-color: #e5e4e2;
-		}
-		.btn-gold {
-			background-color: gold;
-			border: 2px solid gold;
-		}
-		.btn-silver {
-			background-color:  silver;
-			border: 2px solid silver;
-		}
-		.btn-copper {
-			background-color: #b87333;
-			border: 2px solid #b87333 ;
-		}
-		.crossRotate {
-			-webkit-transition-duration: 1s;
-			-moz-transition-duration: 1s;
-			-o-transition-duration: 1s;
-			transition-duration: 1s;
-			-webkit-transition-property: -webkit-transform;
-			-moz-transition-property: -moz-transform;
-			-o-transition-property: -o-transform;
-			transition-property: transform;
-		  outline: 0;
-		}
 
-		.crossRotate_focus {
-			-webkit-transform: rotate(360deg);
-			-ms-transform: rotate(360deg);
-		  transform: rotate(360deg);
-		}
 		.whiteball {
 			background-color: white;
 		}
