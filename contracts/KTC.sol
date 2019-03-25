@@ -74,10 +74,10 @@ contract KTC is ERC20, ERC20Detailed {
 		}
 		return nodeCount;
 	}
-	/* test function for msg.sender / tx.origin
+	/* test function for msg.sender / msg.sender
 	function bal () public view returns (uint256){
-		require( balanceOf(tx.origin) >= 0 );
-		return balanceOf(tx.origin);
+		require( balanceOf(msg.sender) >= 0 );
+		return balanceOf(msg.sender);
 	}*/
 	
 	
@@ -94,21 +94,21 @@ contract KTC is ERC20, ERC20Detailed {
 		
 		//require an initial deposit to create the pool
 		uint256 cost = POOL_CREATION_COST * (uint256(10)**uint256(decimals()));
-		require ( balanceOf(tx.origin) > cost );
-		_burn(tx.origin, cost );
+		require ( balanceOf(msg.sender) > cost );
+		_burn(msg.sender, cost );
 		
 		//initialize the withdrawal date
 		p.lastBlockNumberWithdraw = block.number;
 		//add creator's address to the list of pool members
-		p.members.push(tx.origin);
+		p.members.push(msg.sender);
 		//set creator's share
-		p.membersStake[tx.origin] = cost;
+		p.membersStake[msg.sender] = cost;
 		
 		//update pool status
 		p.tierLevel = 5;
 		p.balance = cost;
 		//add pool to _mypools
-		_mypools[tx.origin].pools.push(_name);
+		_mypools[msg.sender].pools.push(_name);
 		
 		return _name;
 	}
@@ -137,15 +137,15 @@ contract KTC is ERC20, ERC20Detailed {
 		withdrawPoolDividends(_name);
 		
 		//if not yet a member, add to members[] and add to _mypools list
-		if ( p.membersStake[tx.origin] == 0 ){
-			p.members.push(tx.origin);
-			_mypools[tx.origin].pools.push(_name);
+		if ( p.membersStake[msg.sender] == 0 ){
+			p.members.push(msg.sender);
+			_mypools[msg.sender].pools.push(_name);
 		}
 
 		//add value to current stake
-		p.membersStake[tx.origin] = p.membersStake[tx.origin] + value;
+		p.membersStake[msg.sender] = p.membersStake[msg.sender] + value;
 		//remove value from user's balance
-		_burn(tx.origin, value );
+		_burn(msg.sender, value );
 		
 		uint256 currentTier = p.tierLevel;
 		//update pool status: if current tier is not already max && we passed in a new level && ??? TODO define better
@@ -181,7 +181,7 @@ contract KTC is ERC20, ERC20Detailed {
 	* @dev Distribute pool dividends to all users
 	*/
 	function withdrawPoolDividends(bytes32 _name) public {
-		//Pool storage p = _pools[_name];
+		//if the pool exists && the tierLevel is not over the definition (currently 5)
 		if ( _pools[_name].lastBlockNumberWithdraw > 0 && _pools[_name].tierLevel < tierReq.length  ){
 			for ( uint256 i = 0; i < _pools[_name].members.length ; i++ ){
 				address memberAdd = _pools[_name].members[i];
@@ -190,6 +190,8 @@ contract KTC is ERC20, ERC20Detailed {
 				uint256 div = _pools[_name].membersStake[memberAdd] * period * tierYield[_pools[_name].tierLevel] / 100 / 360 / 86400;
 				_mint(memberAdd, div );
 			}
+			//after disributing dividends, update the last time dividends were distributed to now
+			_pools[_name].lastBlockNumberWithdraw = block.number;
 		}
 	}
 	
@@ -226,17 +228,17 @@ contract KTC is ERC20, ERC20Detailed {
 		withdrawPoolDividends(_name);
 		
 		//if withdraw >= curent stake, remove the user completely
-		if ( value >= p.membersStake[tx.origin]  ){
+		if ( value >= p.membersStake[msg.sender]  ){
 			//remove member from pool's member list & from user's pool list
-			removeFromPoolMemberList(p.members, tx.origin);
-			removeFromUserPoolList(_mypools[tx.origin].pools, _name);
+			removeFromPoolMemberList(p.members, msg.sender);
+			removeFromUserPoolList(_mypools[msg.sender].pools, _name);
 			
-			_mint(tx.origin, p.membersStake[tx.origin]);
-			p.membersStake[tx.origin] = 0;
+			_mint(msg.sender, p.membersStake[msg.sender]);
+			p.membersStake[msg.sender] = 0;
 		} else {
 			//if withdraw less than all, just mint the value and remove from balance
-			_mint(tx.origin, value );
-			p.membersStake[tx.origin] = p.membersStake[tx.origin] - value;
+			_mint(msg.sender, value );
+			p.membersStake[msg.sender] = p.membersStake[msg.sender] - value;
 		}
 
 		p.balance = p.balance - value;
@@ -264,8 +266,10 @@ contract KTC is ERC20, ERC20Detailed {
 	* @dev transfers part or totality of a user's pool funds to another address (necessary for locked pools where withdrawals are not allowed)
 	*/
 	function transferShare(bytes32 _name, uint256 value, address _toAddress) public {
+		require(_toAddress != address(0));
+		
 		Pool storage p = _pools[_name];
-		require ( p.membersStake[tx.origin] >= value );
+		require ( p.membersStake[msg.sender] >= value );
 		//update pool dividends
 		withdrawPoolDividends(_name);
 		
@@ -278,12 +282,12 @@ contract KTC is ERC20, ERC20Detailed {
 		p.membersStake[_toAddress] = p.membersStake[_toAddress] + value;
 		
 		//remove balance from sending User
-		p.membersStake[tx.origin] = p.membersStake[tx.origin] - value;
+		p.membersStake[msg.sender] = p.membersStake[msg.sender] - value;
 		
 		//if sending User has transferred his whole stake, i.e now his value in the pool is 0
-		if ( p.membersStake[tx.origin] == 0){
-			removeFromPoolMemberList(p.members, tx.origin);
-			removeFromUserPoolList(_mypools[tx.origin].pools, _name);
+		if ( p.membersStake[msg.sender] == 0){
+			removeFromPoolMemberList(p.members, msg.sender);
+			removeFromUserPoolList(_mypools[msg.sender].pools, _name);
 		}
 		
 	}
@@ -344,6 +348,14 @@ contract KTC is ERC20, ERC20Detailed {
 	function getMyPools(address _address) public view returns (bytes32[] memory) {
 		return _mypools[_address].pools ;
 	}
+	
+	/**
+     * @dev Burns a specific amount of tokens.
+     * @param value The amount of token to be burned.
+     */
+    function burn(uint256 value) public {
+        _burn(msg.sender, value);
+    }
 	
 }
 

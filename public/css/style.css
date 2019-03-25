@@ -1,6 +1,6 @@
 		body {
 			background-color: #f2f2f4/*#f4f3ef;*/;
-			font-size: 2rem;
+			font-size: 1.6rem;
 		}
 		.header {
 			background-image: url('./img/boxhud-top.png');
@@ -105,10 +105,10 @@
 			margin-bottom: 20px;
 		}
 		.mh-15{
-			min-height: 155px;
+			min-height: 185px;
 		}
 		.poolName {
-			font-size: 1.5rem;
+			font-size: 3.5rem;
 			color: #646361;
 		}
 		.poolLogo {
@@ -121,6 +121,7 @@
 		}
 		.nav-link {
 			background-color: white;
+			padding: 0.5rem 0.5rem;
 		}
 		.faq-header {
 			padding: 0px;
@@ -129,4 +130,25 @@
 		.faq-content {
 			text-align: left;
 			padding: 0.5rem;
+		}
+		hr {
+			border-color: #EEEEEE;
+			-moz-use-text-color #FFFFFF;
+			border-style: solid none;
+			border-width: 1px 0;
+			margin: 18px 0;
+		}
+		button {
+			text-align:left;
+		}
+		.up {
+			border: 2px solid #007bff;
+			border-top: 0;
+			padding: 0 1rem;
+			height: 50%;
+		}
+		.up:after {
+			content: "\2b71";
+		.down {
+			
 		}
