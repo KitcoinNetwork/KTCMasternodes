@@ -264,6 +264,14 @@ async function addFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
+	//limiting decimals precision in funds added-removed-transferred
+	var mantissa = value.split('.')[1];
+	if ( typeof mantissa !== 'undefined' && mantissa > 10**4 ){
+		console.log("mantissa: "+mantissa+" - "+mantissa.length);
+		alertError(poolName, window.lang['toomanydecimals'] );
+		return;
+	}
+	
 	var add = await tokenContract.methods.joinPool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
 		//console.log(result);
 		updatePage();
@@ -280,6 +288,14 @@ async function removeFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
+	//limiting decimals precision in funds added-removed-transferred
+	var mantissa = value.split('.')[1];
+	if ( typeof mantissa !== 'undefined' && mantissa > 10**4 ){
+		console.log("mantissa: "+mantissa+" - "+mantissa.length);
+		alertError(poolName, window.lang['toomanydecimals'] );
+		return;
+	}
+	
 	var add = await tokenContract.methods.leavePool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
 		console.log(result);
 		updatePage();
@@ -297,14 +313,24 @@ async function transferFunds(poolName){
 	var value = $('#'+poolName+'KTCAmount').val();
 	var toAddress = $('#'+poolName+'TrfFundAdd').val();
 	
+	//limiting decimals precision in funds added-removed-transferred
+	var mantissa = value.split('.')[1];
+	if ( typeof mantissa !== 'undefined' && mantissa > 10**4 ){
+		console.log("mantissa: "+mantissa+" - "+mantissa.length);
+		alertError(poolName, window.lang['toomanydecimals'] );
+		return;
+	}
+	
+	console.log("Transferring KTC: "+web3.utils.toWei(value, 'ether'));
 	var transferTo = await tokenContract.methods.transferShare(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 900000}).then( (result) => {
 		console.log(result);
 		updatePage();
-		alertSuccess(poolName, window.lang['successTransferingFunds'] );
+		alertSuccess(poolName, window.lang['successTransferringFunds'] );
 	}).catch( (err) => {
 		console.log(err);
-		alertError(poolName, window.lang['errorTransferingFunds'] );
+		alertError(poolName, window.lang['errorTransferringFunds'] );
 	});
+	
 }
 
 

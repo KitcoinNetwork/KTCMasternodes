@@ -274,9 +274,12 @@ contract KTC is ERC20, ERC20Detailed {
 		require(_toAddress != address(0));
 		//check that pool exists
 		require ( _pools[_name].lastBlockNumberWithdraw != 0 );
+		require ( _pools[_name].membersStake[msg.sender] >= value );
 		
 		//check that share transfer is minimum and doesn't leave dust ( balance >= 1 KTC OR balance == 0 )
-		require ( value >= 10**18 &&  ( _pools[_name].membersStake[msg.sender] - value >= 10**18 || _pools[_name].membersStake[msg.sender] - value == 0 ) );
+		require ( value >= 10**18 );
+		uint256 dust = _pools[_name].membersStake[msg.sender] - value;
+		require ( dust >= 10**18 || dust == 0 );
 		
 		Pool storage p = _pools[_name];
 		
