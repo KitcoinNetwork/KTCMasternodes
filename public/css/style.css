@@ -149,6 +149,7 @@ button {
 }
 .nav-pills .nav-link {
     border-radius: 0;
+	box-shadow: 0px 2px 2px #bfbfbf;
 }
 .nav-pills .nav-link.active {
 	background-color: #4a66ed;
@@ -159,4 +160,8 @@ a {
 .btn-primary {
     background-color: #4a66ed;
     border-color: #4a66ed;
+	border-radius: 0;
+}
+.btn-link {
+	color: #4a66ed;
 }
