@@ -108,7 +108,7 @@ async function claimDividends(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
-	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 200000}).then( (res) => {
+	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 900000}).then( (res) => {
 		updatePage();
 		alertSuccess(poolName, window.lang['successDividends'] );
 	}).catch( (err) => {
@@ -194,9 +194,15 @@ async function listMyPools(){
 	var myAccount = (await web3.eth.getAccounts())[0];
 
 	var myPools = await tokenContract.methods.getMyPools(myAccount).call();
-	//console.log(myPools);
+	console.log(myPools);
 	var balanceInPools = 0;
-	if ( myPools.length> 0 ) $("#poolList").empty();
+
+	$("#poolList").empty();
+	if ( myPools.length == 0 ) {
+		$('#poolList').append('<div class="dashboard-container mh-15"><div style="padding-top: 40px; text-align: center;">'+
+					window.lang["youarenotinapool"]+'<br><a href="#" onclick="$(\'#pills-profile-tab\').tab(\'show\')">'+
+					window.lang["joinapool"]+'</a></div></div>');
+	}
 	for ( i = 0; i< myPools.length; i++){
 		console.log(myPools[i]);
 		var pool = myPools[i];
@@ -243,7 +249,7 @@ async function createPool(){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var poolName = await web3.utils.utf8ToHex(document.getElementById("createPool").value);
 	console.log(poolName);
-	var create = await tokenContract.methods.createPool(poolName).send({from: myAccount, gas: 200000}).then( (result) => {
+	var create = await tokenContract.methods.createPool(poolName).send({from: myAccount, gas: 900000}).then( (result) => {
 		updatePage()
 		alertSuccess("createAPool", window.lang['successCreatingPool'] );
 	}).catch( (err) => {
@@ -258,7 +264,7 @@ async function addFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
-	var add = await tokenContract.methods.joinPool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
+	var add = await tokenContract.methods.joinPool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
 		//console.log(result);
 		updatePage();
 		alertSuccess(poolName, window.lang['successAddingFunds'] );
@@ -274,7 +280,7 @@ async function removeFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
-	var add = await tokenContract.methods.leavePool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 200000}).then( (result) => {
+	var add = await tokenContract.methods.leavePool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
 		console.log(result);
 		updatePage();
 		alertSuccess(poolName, window.lang['successWithdrawingFunds'] );
@@ -291,7 +297,7 @@ async function transferFunds(poolName){
 	var value = $('#'+poolName+'KTCAmount').val();
 	var toAddress = $('#'+poolName+'TrfFundAdd').val();
 	
-	var transferTo = await tokenContract.methods.transferShare(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 200000}).then( (result) => {
+	var transferTo = await tokenContract.methods.transferShare(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 900000}).then( (result) => {
 		console.log(result);
 		updatePage();
 		alertSuccess(poolName, window.lang['successTransferingFunds'] );

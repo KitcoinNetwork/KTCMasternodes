@@ -183,11 +183,14 @@ contract KTC is ERC20, ERC20Detailed {
 	function withdrawPoolDividends(bytes32 _name) public {
 		//if the pool exists && the tierLevel is not over the definition (currently 5)
 		if ( _pools[_name].lastBlockNumberWithdraw > 0 && _pools[_name].tierLevel < tierReq.length  ){
+			
+			uint256 period = block.number - _pools[_name].lastBlockNumberWithdraw;
+			uint256 tempYield = period * tierYield[_pools[_name].tierLevel] ;
+			uint256 time = 3110400000; // 100 * 360 * 86400;
 			for ( uint256 i = 0; i < _pools[_name].members.length ; i++ ){
 				address memberAdd = _pools[_name].members[i];
-				uint256 period = block.number - _pools[_name].lastBlockNumberWithdraw;
 				//since blocktime is 1 second, we approximate dirtily, keep 360 days to compensate slight overtime
-				uint256 div = _pools[_name].membersStake[memberAdd] * period * tierYield[_pools[_name].tierLevel] / 100 / 360 / 86400;
+				uint256 div = _pools[_name].membersStake[memberAdd] * tempYield / time;
 				_mint(memberAdd, div );
 			}
 			//after disributing dividends, update the last time dividends were distributed to now
@@ -218,8 +221,8 @@ contract KTC is ERC20, ERC20Detailed {
 	*/
 	function leavePool(bytes32 _name, uint256 value) public  {
 		Pool storage p = _pools[_name];
-		//check that pool exists
-		require ( p.lastBlockNumberWithdraw != 0 );
+		//check that pool exists and user has funds
+		require ( p.lastBlockNumberWithdraw != 0 && p.membersStake[msg.sender] != 0 );
 
 		//check if allowed: TODO does not overflow max pool stake && pool not already tier0
 		require ( p.tierLevel != 0 );
@@ -227,21 +230,23 @@ contract KTC is ERC20, ERC20Detailed {
 		//update pool dividends
 		withdrawPoolDividends(_name);
 		
-		//if withdraw >= curent stake, remove the user completely
-		if ( value >= p.membersStake[msg.sender]  ){
+		//if withdraw >= curent stake OR if the remaining stake would be dust, remove the user completely
+		if ( value >= p.membersStake[msg.sender] || p.membersStake[msg.sender] - value < 10**18 ){
 			//remove member from pool's member list & from user's pool list
 			removeFromPoolMemberList(p.members, msg.sender);
 			removeFromUserPoolList(_mypools[msg.sender].pools, _name);
 			
 			_mint(msg.sender, p.membersStake[msg.sender]);
+			p.balance = p.balance - p.membersStake[msg.sender];
 			p.membersStake[msg.sender] = 0;
+			
 		} else {
 			//if withdraw less than all, just mint the value and remove from balance
 			_mint(msg.sender, value );
 			p.membersStake[msg.sender] = p.membersStake[msg.sender] - value;
+			p.balance = p.balance - value;
 		}
 
-		p.balance = p.balance - value;
 		if ( p.balance > 0 ){
 			uint256 currentTier = p.tierLevel;
 			uint256 couldBeTier = poolLevel(p.balance);
@@ -267,9 +272,14 @@ contract KTC is ERC20, ERC20Detailed {
 	*/
 	function transferShare(bytes32 _name, uint256 value, address _toAddress) public {
 		require(_toAddress != address(0));
+		//check that pool exists
+		require ( _pools[_name].lastBlockNumberWithdraw != 0 );
+		
+		//check that share transfer is minimum and doesn't leave dust ( balance >= 1 KTC OR balance == 0 )
+		require ( value >= 10**18 &&  ( _pools[_name].membersStake[msg.sender] - value >= 10**18 || _pools[_name].membersStake[msg.sender] - value == 0 ) );
 		
 		Pool storage p = _pools[_name];
-		require ( p.membersStake[msg.sender] >= value );
+		
 		//update pool dividends
 		withdrawPoolDividends(_name);
 		
