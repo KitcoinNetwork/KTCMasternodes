@@ -461,7 +461,7 @@ var human_standard_token_abi = [
           "type": "bytes32"
         },
         {
-          "name": "value",
+          "name": "_value",
           "type": "uint256"
         }
       ],
@@ -632,5 +632,20 @@ var human_standard_token_abi = [
       "stateMutability": "view",
       "type": "function",
       "signature": "0x0e886793"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "burn",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "signature": "0x42966c68"
     }
   ];
