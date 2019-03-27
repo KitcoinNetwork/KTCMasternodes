@@ -99,6 +99,7 @@ async function getKTCBalance() {
 		$("#totalSupply").text(Math.trunc((await totalSupply)/10**18));
 	} catch (error){
 		console.log(error);
+		alertError(poolName, window.lang['unexpectederror'] );
 	}
 }
 
@@ -151,6 +152,7 @@ async function searchPool(){
 		}
 	}).catch( (err) => {
 		console.log(error);
+		alertError(poolName, window.lang['unexpectederror'] );
 	});
 }
 
@@ -184,6 +186,7 @@ async function getPoolInfo(name){
 		return poolInfo;
 	}).catch( (err) => {
 		console.log(error);
+		alertError(poolName, window.lang['unexpectederror'] );
 		return 
 	});
 }
@@ -247,7 +250,16 @@ function alertSuccess(appendToDiv, errorMessage){
 async function createPool(){
 	connectContract();
 	var myAccount = (await web3.eth.getAccounts())[0];
-	var poolName = await web3.utils.utf8ToHex(document.getElementById("createPool").value);
+	var name = document.getElementById("createPool").value;
+	//forbid special chars cuz it interfers with the frontend
+	var match = /[*?\-+^${}[\]().|\\\'\"\/\&`~%;,:!_@<>=§#²]/.exec(name);
+	if (match) {
+		console.log(match.index);
+		alertError("createAPool", "Bad characters");
+		return;
+	}
+	
+	var poolName = await web3.utils.utf8ToHex(name);
 	console.log(poolName);
 	var create = await tokenContract.methods.createPool(poolName).send({from: myAccount, gas: 900000}).then( (result) => {
 		updatePage()
@@ -264,6 +276,11 @@ async function addFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
+	if ( isNaN(value) || value == '' || value <= 0){
+		alertError(poolName, window.lang['invalidnumber'] );
+		return ;
+	}
+	
 	//limiting decimals precision in funds added-removed-transferred
 	var mantissa = value.split('.')[1];
 	if ( typeof mantissa !== 'undefined' && mantissa > 10**4 ){
@@ -288,6 +305,11 @@ async function removeFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
+	if ( isNaN(value) || value == '' || value <= 0){
+		alertError(poolName, window.lang['invalidnumber'] );
+		return ;
+	}
+	
 	//limiting decimals precision in funds added-removed-transferred
 	var mantissa = value.split('.')[1];
 	if ( typeof mantissa !== 'undefined' && mantissa > 10**4 ){
@@ -312,6 +334,14 @@ async function transferFunds(poolName){
 	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 	var toAddress = $('#'+poolName+'TrfFundAdd').val();
+	
+	if ( isNaN(value) || value == '' || value <= 0){
+		alertError(poolName, window.lang['invalidnumber'] );
+		return ;
+	}
+	if ( toAddress == '' ){
+		return;
+	}
 	
 	//limiting decimals precision in funds added-removed-transferred
 	var mantissa = value.split('.')[1];

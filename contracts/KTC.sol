@@ -10,7 +10,7 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract KTC is ERC20, ERC20Detailed {
 	using SafeMath for uint256;
 	
-	uint256 public constant initial_supply = 60000000;  
+	uint256 public constant initial_supply = 10000000;  
 	uint256 public constant scaling = uint256(10) ** 8;
 	
 	uint256[5] public tierReq = [ 10000, 5000, 2000, 1000, 500];
