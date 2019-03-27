@@ -95,7 +95,7 @@ function getKTCBalance() {
 
 	/* Updating network status: masternode numbers */
 	//TODO replace by a getter function
-	tokenContract.totalSupply(function (totalSupply) {
+	tokenContract.totalSupply(function (err, totalSupply) {
 		$("#totalSupply").text(Math.trunc((totalSupply)/10**18));
 	});
 	tokenContract.tierNumber(0, function (err, numTier) {
@@ -188,14 +188,14 @@ function poolContainer(poolName, members, tier, dividends, balance, balanceUser)
 function listMyPools(){
 	//connectContract();
 	$("#poolList").empty();
-	var balanceInPools = 0;
+	document.getElementById('balanceInPools').innerHTML = 0;
 	tokenContract.getMyPools(myAccount, function(err, res){
 		console.log(res, err);
 		res.forEach( function(poolName){
 			console.log(poolName);
 			var pool = poolName;
 			tokenContract.getPoolStatus(pool, myAccount, function(err, poolInfo){
-				balanceInPools += Math.trunc(poolInfo[4]/10**12) / 10**6;
+				document.getElementById('balanceInPools').innerHTML = parseInt(document.getElementById('balanceInPools').innerHTML) + Math.trunc(poolInfo[4]/10**12) / 10**6;
 				var poolName = fromHex(pool);
 				$('#poolList').append('<div id="'+poolName+'" class="poolContainer dashboard-container">' +
 					poolContainer(poolName, poolInfo[0], poolInfo[1], poolInfo[2], poolInfo[3], poolInfo[4])+
@@ -221,10 +221,7 @@ function listMyPools(){
 		}
 	});
 
-	var balanceInPools = 0;
-
-	document.getElementById('balanceInPools').innerHTML = balanceInPools;
-
+	
 }
 
 function alertError(appendToDiv, errorMessage){
