@@ -104,14 +104,15 @@ async function getKTCBalance() {
 }
 
 
-async function claimDividends(poolName){
+function claimDividends(poolName){
 	connectContract();
 	
 	//console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
-	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 900000}).then( (res) => {
-		updatePage();
+	
+	tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 900000}).then( (res) => {
 		alertSuccess(poolName, window.lang['successDividends'] );
+		updatePage();
 	}).catch( (err) => {
 		console.log(err);
 		alertError(poolName, window.lang['errorDividends'] );
@@ -119,7 +120,7 @@ async function claimDividends(poolName){
 }
 
 
-async function searchPool(){
+function searchPool(){
 	connectContract();
 	
 	var poolName = document.getElementById("searchPool").value;
