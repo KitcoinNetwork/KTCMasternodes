@@ -1,7 +1,7 @@
 var tokenContract;
 var userAccount;
 var tierROI = [ 20, 10, 8, 6, 5, 0];
-
+var myAccount;
 window.addEventListener('load', async () => {
     if (window.ethereum) {
             window.web3 = new Web3(ethereum);
@@ -27,13 +27,15 @@ window.addEventListener('load', async () => {
 	
 	//TODO: run after setting contract address
 	//listMyPools();
-	document.getElementById("address").value = (await web3.eth.getAccounts())[0];
+	//document.getElementById("address").value = (await web3.eth.getAccounts())[0];
+	myAccount = (await web3.eth.getAccounts())[0];
+	updatePage();
 })
 
 function connectContract(){
 	if ( tokenContract == null ){
-		var address = document.getElementById("address").value;
-		var contractAddress = document.getElementById("contractAddress").value;
+		//var address = document.getElementById("address").value;
+		var contractAddress = "0x77c7C8C60283eBC3774aE4fCBe4F25530E4edC8A";
 		var contractABI = human_standard_token_abi;
 		//console.log(contractABI);
 		tokenContract = new web3.eth.Contract(contractABI, contractAddress);
@@ -73,8 +75,8 @@ async function updatePage() {
 
 async function getKTCBalance() {
 	connectContract();
-	var tokenBalance = tokenContract.methods.balanceOf("0x1e81F9210adD6c747CD33490cE6Ec94226532177").call().then( (res) => {
-		document.getElementById("output2").innerHTML = res + " KTC";
+	var tokenBalance = tokenContract.methods.balanceOf(myAccount).call().then( (res) => {
+		//document.getElementById("output2").innerHTML = res + " KTC";
 		document.getElementById("myBalance").innerHTML = Math.trunc(res / 10**12) / 10**6 ;
 	}).catch( (err) => {
 		console.log(err);
@@ -106,7 +108,7 @@ async function getKTCBalance() {
 
 async function claimDividends(poolName){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
+	
 	console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
 	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 900000}).then( (res) => {
@@ -121,7 +123,6 @@ async function claimDividends(poolName){
 
 async function searchPool(){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
 	
 	var poolName = document.getElementById("searchPool").value;
 	var poolNameWeb3 = web3.utils.utf8ToHex(poolName);
@@ -175,7 +176,6 @@ function poolContainer(poolName, members, tier, dividends, balance, balanceUser)
 
 async function getPoolInfo(name){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
 	
 	var poolName = web3.utils.utf8ToHex(name);
 	tokenContract.methods.getPoolStatus(poolName, myAccount).call().then( (poolInfo) => {
@@ -194,7 +194,6 @@ async function getPoolInfo(name){
 
 async function listMyPools(){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
 
 	var myPools = await tokenContract.methods.getMyPools(myAccount).call();
 	console.log(myPools);
@@ -249,7 +248,7 @@ function alertSuccess(appendToDiv, errorMessage){
 
 async function createPool(){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
+	
 	var name = document.getElementById("createPool").value;
 	//forbid special chars cuz it interfers with the frontend
 	var match = /[*?\-+^${}[\]().|\\\'\"\/\&`~%;,:!_@<>=§#²]/.exec(name);
@@ -273,7 +272,7 @@ async function createPool(){
 
 async function addFunds(poolName){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
+
 	var value = $('#'+poolName+'KTCAmount').val();
 
 	if ( isNaN(value) || value == '' || value <= 0){
@@ -302,7 +301,6 @@ async function addFunds(poolName){
 
 async function removeFunds(poolName){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 
 	if ( isNaN(value) || value == '' || value <= 0){
@@ -331,7 +329,6 @@ async function removeFunds(poolName){
 
 async function transferFunds(poolName){
 	connectContract();
-	var myAccount = (await web3.eth.getAccounts())[0];
 	var value = $('#'+poolName+'KTCAmount').val();
 	var toAddress = $('#'+poolName+'TrfFundAdd').val();
 	
