@@ -42,7 +42,7 @@ function connectContract(){
 	}
 }
 	
-
+/*
 const promisify = (inner) =>
     new Promise((resolve, reject) =>
         inner((err, res) => {
@@ -52,25 +52,23 @@ const promisify = (inner) =>
                 resolve(res);
             }
         })
-    );
+    );*/
 
 async function getBalance() {
     var address, wei, balance
-    address = document.getElementById("address").value;
-    wei = promisify(cb => web3.eth.getBalance(address, cb))
-    try {
-        balance = web3.utils.fromWei(await wei, 'ether')
+    address = myAccount;
+    web3.eth.getBalance(address).call().then( (bal) =>{
+        balance = web3.utils.fromWei(bal, 'ether');
         document.getElementById("output").innerHTML = balance + " ETH";
-    } catch (error) {
+    }).catch( (error) => {
         document.getElementById("output").innerHTML = error;
-    }
+    });
 }
 
 async function updatePage() {
 	connectContract();
 	getKTCBalance();
-	await listMyPools();
-	$('.hidd').hide();
+	listMyPools();
 }
 
 async function getKTCBalance() {
@@ -82,34 +80,34 @@ async function getKTCBalance() {
 		console.log(err);
 	});
 
-	var blockNumber = await web3.eth.getBlockNumber();
-	
 	/* Updating network status: masternode numbers */
 	//TODO replace by a getter function
-	var totalSupply = tokenContract.methods.totalSupply().call()
-	var tier1n = tokenContract.methods.tierNumber(0).call()
-	var tier2n = tokenContract.methods.tierNumber(1).call()
-	var tier3n = tokenContract.methods.tierNumber(2).call()
-	var tier4n = tokenContract.methods.tierNumber(3).call()
-	var tier5n = tokenContract.methods.tierNumber(4).call()
-	try  {
-		$("#tier1n").text(await tier1n);
-		$("#tier2n").text(await tier2n);
-		$("#tier3n").text(await tier3n);
-		$("#tier4n").text(await tier4n);
-		$("#tier5n").text(await tier5n);
-		$("#totalSupply").text(Math.trunc((await totalSupply)/10**18));
-	} catch (error){
-		console.log(error);
-		alertError(poolName, window.lang['unexpectederror'] );
-	}
+	var totalSupply = tokenContract.methods.totalSupply().call().then( (totalSupply) => {
+		$("#totalSupply").text(Math.trunc((totalSupply)/10**18));
+	});
+	var tier1n = tokenContract.methods.tierNumber(0).call().then( (numTier) => {
+		$("#tier1n").text(numTier);
+	});
+	var tier2n = tokenContract.methods.tierNumber(1).call().then( (numTier) => {
+		$("#tier1n").text(numTier);
+	});
+	var tier3n = tokenContract.methods.tierNumber(2).call().then( (numTier) => {
+		$("#tier1n").text(numTier);
+	});
+	var tier4n = tokenContract.methods.tierNumber(3).call().then( (numTier) => {
+		$("#tier1n").text(numTier);
+	});
+	var tier5n = tokenContract.methods.tierNumber(4).call().then( (numTier) => {
+		$("#tier1n").text(numTier);
+	});
+
 }
 
 
 async function claimDividends(poolName){
 	connectContract();
 	
-	console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
+	//console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
 	var claim = tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 900000}).then( (res) => {
 		updatePage();
@@ -246,7 +244,7 @@ function alertSuccess(appendToDiv, errorMessage){
 }
 
 
-async function createPool(){
+function createPool(){
 	connectContract();
 	
 	var name = document.getElementById("createPool").value;
@@ -258,11 +256,9 @@ async function createPool(){
 		return;
 	}
 	
-	var poolName = await web3.utils.utf8ToHex(name);
-	console.log(poolName);
-	var create = await tokenContract.methods.createPool(poolName).send({from: myAccount, gas: 900000}).then( (result) => {
-		updatePage()
+	tokenContract.methods.createPool(web3.utils.utf8ToHex(name)).send({from: myAccount, gas: 900000}).then( (result) => {
 		alertSuccess("createAPool", window.lang['successCreatingPool'] );
+		updatePage()
 	}).catch( (err) => {
 		console.log(err);
 		alertError("createAPool", window.lang['errorCreatingPool'] );
@@ -270,7 +266,7 @@ async function createPool(){
 }
 
 
-async function addFunds(poolName){
+function addFunds(poolName){
 	connectContract();
 
 	var value = $('#'+poolName+'KTCAmount').val();
@@ -288,10 +284,10 @@ async function addFunds(poolName){
 		return;
 	}
 	
-	var add = await tokenContract.methods.joinPool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
+	tokenContract.methods.joinPool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
 		//console.log(result);
-		updatePage();
 		alertSuccess(poolName, window.lang['successAddingFunds'] );
+		updatePage();
 	}).catch( (err) => {
 		console.log(err);
 		alertError(poolName, window.lang['errorAddingFunds'] );
@@ -299,7 +295,7 @@ async function addFunds(poolName){
 }
 
 
-async function removeFunds(poolName){
+function removeFunds(poolName){
 	connectContract();
 	var value = $('#'+poolName+'KTCAmount').val();
 
@@ -316,10 +312,11 @@ async function removeFunds(poolName){
 		return;
 	}
 	
-	var add = await tokenContract.methods.leavePool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
+	tokenContract.methods.leavePool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
 		console.log(result);
-		updatePage();
 		alertSuccess(poolName, window.lang['successWithdrawingFunds'] );
+		updatePage();
+		
 	}).catch( (err) => {
 		//console.log(err);
 		alertError(poolName, window.lang['errorWithdrawingFunds'] );
@@ -327,7 +324,7 @@ async function removeFunds(poolName){
 }
 
 
-async function transferFunds(poolName){
+function transferFunds(poolName){
 	connectContract();
 	var value = $('#'+poolName+'KTCAmount').val();
 	var toAddress = $('#'+poolName+'TrfFundAdd').val();
@@ -349,10 +346,10 @@ async function transferFunds(poolName){
 	}
 	
 	console.log("Transferring KTC: "+web3.utils.toWei(value, 'ether'));
-	var transferTo = await tokenContract.methods.transferShare(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 900000}).then( (result) => {
+	tokenContract.methods.transferShare(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 900000}).then( (result) => {
 		console.log(result);
-		updatePage();
 		alertSuccess(poolName, window.lang['successTransferringFunds'] );
+		updatePage();
 	}).catch( (err) => {
 		console.log(err);
 		alertError(poolName, window.lang['errorTransferringFunds'] );
