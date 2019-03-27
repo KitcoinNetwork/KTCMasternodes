@@ -28,89 +28,76 @@ window.addEventListener('load', async () => {
 	//TODO: run after setting contract address
 	//listMyPools();
 	//document.getElementById("address").value = (await web3.eth.getAccounts())[0];
-	myAccount = web3.eth.accounts[0];
-	connectContract();
+	myAccount = (await web3.eth.getAccounts())[0];
 	updatePage();
 })
 
-
-function fromHex(hex){
-	var str;
-	
-  try{
-    str = decodeURIComponent(hex.substr(2).replace(/(..)/g,'%$1'))
-  }
-  catch(e){
-    str = hex
-    console.log('invalid hex input: ' + hex)
-  }
-  return str.replace(/\0+$/, '')
-}
-
-
-function toHex(str){
-	var hex;
-  try{
-    hex = unescape(encodeURIComponent(str))
-    .split('').map(function(v){
-      return v.charCodeAt(0).toString(16)
-    }).join('')
-  }
-  catch(e){
-    hex = str
-    console.log('invalid text input: ' + str)
-  }
-  var pad ="000000000000000000000000000000000000000000000000000000000000000000";
-  return "0x" + hex + pad.substring(0, pad.length - hex.length - 2) 
-
-}
-
-
-
-
-
 function connectContract(){
 	if ( tokenContract == null ){
+		//var address = document.getElementById("address").value;
 		var contractAddress = "0x77c7C8C60283eBC3774aE4fCBe4F25530E4edC8A";
 		var contractABI = human_standard_token_abi;
-		tokenContract = web3.eth.contract(contractABI).at(contractAddress);
+		//console.log(contractABI);
+		tokenContract = new web3.eth.Contract(contractABI, contractAddress);
 	}
 }
 	
+/*
+const promisify = (inner) =>
+    new Promise((resolve, reject) =>
+        inner((err, res) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        })
+    );*/
 
+async function getBalance() {
+    var address, wei, balance
+    address = myAccount;
+    web3.eth.getBalance(address).call().then( (bal) =>{
+        balance = web3.utils.fromWei(bal, 'ether');
+        document.getElementById("output").innerHTML = balance + " ETH";
+    }).catch( (error) => {
+        document.getElementById("output").innerHTML = error;
+    });
+}
 
-function updatePage() {
-	//connectContract();
+async function updatePage() {
+	connectContract();
 	getKTCBalance();
 	listMyPools();
 }
 
-function getKTCBalance() {
-	//connectContract();
-	tokenContract.balanceOf(myAccount,  function (err, res)  {
+async function getKTCBalance() {
+	connectContract();
+	var tokenBalance = tokenContract.methods.balanceOf(myAccount).call().then( (res) => {
 		//document.getElementById("output2").innerHTML = res + " KTC";
 		document.getElementById("myBalance").innerHTML = Math.trunc(res / 10**12) / 10**6 ;
+	}).catch( (err) => {
+		console.log(err);
 	});
-	
 
 	/* Updating network status: masternode numbers */
 	//TODO replace by a getter function
-	tokenContract.totalSupply(function (totalSupply) {
+	var totalSupply = tokenContract.methods.totalSupply().call().then( (totalSupply) => {
 		$("#totalSupply").text(Math.trunc((totalSupply)/10**18));
 	});
-	tokenContract.tierNumber(0, function (err, numTier) {
+	var tier1n = tokenContract.methods.tierNumber(0).call().then( (numTier) => {
 		$("#tier1n").text(numTier);
 	});
-	tokenContract.tierNumber(1, function (err, numTier) {
+	var tier2n = tokenContract.methods.tierNumber(1).call().then( (numTier) => {
 		$("#tier2n").text(numTier);
 	});
-	tokenContract.tierNumber(2, function (err, numTier) {
+	var tier3n = tokenContract.methods.tierNumber(2).call().then( (numTier) => {
 		$("#tier3n").text(numTier);
 	});
-	tokenContract.tierNumber(3, function (err, numTier) {
+	var tier4n = tokenContract.methods.tierNumber(3).call().then( (numTier) => {
 		$("#tier4n").text(numTier);
 	});
-	tokenContract.tierNumber(4, function (err, numTier) {
+	var tier5n = tokenContract.methods.tierNumber(4).call().then( (numTier) => {
 		$("#tier5n").text(numTier);
 	});
 
@@ -118,29 +105,28 @@ function getKTCBalance() {
 
 
 function claimDividends(poolName){
-	//connectContract();
+	connectContract();
+	
 	//console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
-	tokenContract.withdrawPoolDividends(toHex(poolName), {from: myAccount, gas: 900000}, function (err, res) {
-		if (err) {
-			console.log(err);
-			alertError(poolName, window.lang['errorDividends'] );
-		} else {
-			alertSuccess(poolName, window.lang['successDividends'] );
-			updatePage();
-		}
+	
+	tokenContract.methods.withdrawPoolDividends(web3.utils.utf8ToHex(poolName)).send({from: myAccount, gas: 900000}).then( (res) => {
+		alertSuccess(poolName, window.lang['successDividends'] );
+		updatePage();
+	}).catch( (err) => {
+		console.log(err);
+		alertError(poolName, window.lang['errorDividends'] );
 	});
 }
 
 
 function searchPool(){
-	//connectContract();
+	connectContract();
 	
 	var poolName = document.getElementById("searchPool").value;
-	var poolNameWeb3 = toHex(poolName);
-	console.log(poolNameWeb3);
+	var poolNameWeb3 = web3.utils.utf8ToHex(poolName);
 
-	tokenContract.getPoolStatus(poolNameWeb3, myAccount, function (err, poolInfo) {
+	tokenContract.methods.getPoolStatus(poolNameWeb3, myAccount).call().then( (poolInfo) => {
 		console.log(poolInfo);
 		//poolInfo: [pool's members, tierLevel, pending dividends, total balance and arg _address balance]
 		if ( poolInfo[3] == 0 ) {
@@ -164,6 +150,9 @@ function searchPool(){
 				'</div>');
 			}
 		}
+	}).catch( (err) => {
+		console.log(error);
+		alertError(poolName, window.lang['unexpectederror'] );
 	});
 }
 
@@ -184,47 +173,60 @@ function poolContainer(poolName, members, tier, dividends, balance, balanceUser)
 }
 
 
+async function getPoolInfo(name){
+	connectContract();
+	
+	var poolName = web3.utils.utf8ToHex(name);
+	tokenContract.methods.getPoolStatus(poolName, myAccount).call().then( (poolInfo) => {
+		console.log(poolInfo);
+		//poolInfo: [pool's members, tierLevel, pending dividends, total balance and arg _address balance]
+		if ( poolInfo[3] == 0 ) console.log('No such pool');
+		else console.log("Pool: "+poolName+", Balance: "+poolInfo[3]);
+		return poolInfo;
+	}).catch( (err) => {
+		console.log(error);
+		alertError(poolName, window.lang['unexpectederror'] );
+		return 
+	});
+}
 
-function listMyPools(){
-	//connectContract();
-	$("#poolList").empty();
+
+async function listMyPools(){
+	connectContract();
+
+	var myPools = await tokenContract.methods.getMyPools(myAccount).call();
+	console.log(myPools);
 	var balanceInPools = 0;
-	tokenContract.getMyPools(myAccount, function(err, res){
-		console.log(res, err);
-		res.forEach( function(poolName){
-			console.log(poolName);
-			var pool = poolName;
-			tokenContract.getPoolStatus(pool, myAccount, function(err, poolInfo){
-				balanceInPools += Math.trunc(poolInfo[4]/10**12) / 10**6;
-				var poolName = fromHex(pool);
-				$('#poolList').append('<div id="'+poolName+'" class="poolContainer dashboard-container">' +
-					poolContainer(poolName, poolInfo[0], poolInfo[1], poolInfo[2], poolInfo[3], poolInfo[4])+
-					'<div class="poolAddFunds"><div  style="display: flex; justify-content: space-between;">'+
-						((poolInfo[1] > 0) ? 
-							( (poolInfo[3]/10**18 < 10000) ? '<a href="#" onClick="event.preventDefault(); $(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["addfunds"]+' &#x1f845;</a> &nbsp;' : '') + ' <a href="#" onClick="event.preventDefault(); $(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();"> &#x1f847; '+window.lang["withdrawfunds"]+'</a>'
-							: '<a href="#" onClick="event.preventDefault(); $(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">'+window.lang["transferfunds"]+' &#x1f846; </a><br>')+
-						'</div>'+
-						'<form class="form-inline mt-2"><input type="text" class="form-control col mr-2 mb-1 hidd '+poolName+'KTCAmount" placeholder="'+window.lang["ktcamount"]+'" id="'+poolName+'KTCAmount">'+
-						'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'AddAmount" value="'+window.lang["addfunds"]+'" onClick="addFunds(\''+poolName+'\')">'+
-						'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'RemAmount" value="'+window.lang["withdrawfunds"]+'" onClick="removeFunds(\''+poolName+'\')">'+
-						'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'TrfAmount" value="'+window.lang["transferfunds"]+'" onClick="transferFunds(\''+poolName+'\')">'+
-						'<input type="text" class="form-control hidd col-12 '+poolName+'KTCDest" placeholder="'+window.lang["transferaddress"]+'"," id="'+poolName+'TrfFundAdd">'+
-						'</form></div></div>');
-					$('.hidd').hide();
-			});
 
-		});
-		if ( res.length == 0 ){
+	$("#poolList").empty();
+	if ( myPools.length == 0 ) {
 		$('#poolList').append('<div class="dashboard-container mh-15"><div style="padding-top: 40px; text-align: center;">'+
 					window.lang["youarenotinapool"]+'<br><a href="#" onclick="$(\'#pills-profile-tab\').tab(\'show\')">'+
 					window.lang["joinapool"]+'</a></div></div>');
-		}
-	});
-
-	var balanceInPools = 0;
-
+	}
+	for ( i = 0; i< myPools.length; i++){
+		console.log(myPools[i]);
+		var pool = myPools[i];
+		var poolInfo = await tokenContract.methods.getPoolStatus(pool, myAccount).call();
+		console.log(poolInfo);
+		balanceInPools += Math.trunc(poolInfo[4]/10**12) / 10**6;
+		var poolName = web3.utils.hexToUtf8(pool);
+		$('#poolList').append('<div id="'+poolName+'" class="poolContainer dashboard-container">' +
+			poolContainer(poolName, poolInfo[0], poolInfo[1], poolInfo[2], poolInfo[3], poolInfo[4])+
+			'<div class="poolAddFunds"><div  style="display: flex; justify-content: space-between;">'+
+				((poolInfo[1] > 0) ? 
+					( (poolInfo[3]/10**18 < 10000) ? '<a href="#" onClick="event.preventDefault(); $(\'.hidd\').hide(); $(\'.'+poolName+'AddAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();">'+window.lang["addfunds"]+' &#x1f845;</a> &nbsp;' : '') + ' <a href="#" onClick="event.preventDefault(); $(\'.hidd\').hide(); $(\'.'+poolName+'RemAmount\').show(); $(\'.'+poolName+'KTCAmount\').show();"> &#x1f847; '+window.lang["withdrawfunds"]+'</a>'
+					: '<a href="#" onClick="event.preventDefault(); $(\'.hidd\').hide(); $(\'.'+poolName+'TrfAmount\').show(); $(\'.'+poolName+'KTCAmount\').show(); $(\'.'+poolName+'KTCDest\').show();">'+window.lang["transferfunds"]+' &#x1f846; </a><br>')+
+				'</div>'+
+				'<form class="form-inline mt-2"><input type="text" class="form-control col mr-2 mb-1 hidd '+poolName+'KTCAmount" placeholder="'+window.lang["ktcamount"]+'" id="'+poolName+'KTCAmount">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'AddAmount" value="'+window.lang["addfunds"]+'" onClick="addFunds(\''+poolName+'\')">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'RemAmount" value="'+window.lang["withdrawfunds"]+'" onClick="removeFunds(\''+poolName+'\')">'+
+				'<input type="button" class="btn btn-primary hidd mb-1 '+poolName+'TrfAmount" value="'+window.lang["transferfunds"]+'" onClick="transferFunds(\''+poolName+'\')">'+
+				'<input type="text" class="form-control hidd col-12 '+poolName+'KTCDest" placeholder="'+window.lang["transferaddress"]+'"," id="'+poolName+'TrfFundAdd">'+
+				'</form></div></div>');
+	}
 	document.getElementById('balanceInPools').innerHTML = balanceInPools;
-
+	$('.hidd').hide();
 }
 
 function alertError(appendToDiv, errorMessage){
@@ -255,12 +257,12 @@ function createPool(){
 		return;
 	}
 	
-	tokenContract.createPool(toHex(name), {from: myAccount, gas: 900000}, function(err, result) {
-		if (err) alertError("createAPool", window.lang['errorCreatingPool'] );
-		else {
-			alertSuccess("createAPool", window.lang['successCreatingPool'] );
-			updatePage()
-		}
+	tokenContract.methods.createPool(web3.utils.utf8ToHex(name)).send({from: myAccount, gas: 900000}).then( (result) => {
+		alertSuccess("createAPool", window.lang['successCreatingPool'] );
+		updatePage()
+	}).catch( (err) => {
+		console.log(err);
+		alertError("createAPool", window.lang['errorCreatingPool'] );
 	});
 }
 
@@ -283,15 +285,13 @@ function addFunds(poolName){
 		return;
 	}
 	
-	tokenContract.joinPool(toHex(poolName), value*10**18, {from: myAccount, gas: 900000}, function (err, result) {
+	tokenContract.methods.joinPool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
 		//console.log(result);
-		if (err) {
-			console.log(err);
-			alertError(poolName, window.lang['errorAddingFunds'] );
-		}else {
-			alertSuccess(poolName, window.lang['successAddingFunds'] );
-			updatePage();
-		}
+		alertSuccess(poolName, window.lang['successAddingFunds'] );
+		updatePage();
+	}).catch( (err) => {
+		console.log(err);
+		alertError(poolName, window.lang['errorAddingFunds'] );
 	});
 }
 
@@ -313,13 +313,14 @@ function removeFunds(poolName){
 		return;
 	}
 	
-	tokenContract.leavePool(toHex(poolName), value*10**18, {from: myAccount, gas: 900000}, function (err, result) {
-		if (err) alertError(poolName, window.lang['errorWithdrawingFunds'] );
-		else {
-			alertSuccess(poolName, window.lang['successWithdrawingFunds'] );
-			updatePage();
-		}
+	tokenContract.methods.leavePool(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether')).send({from: myAccount, gas: 900000}).then( (result) => {
+		console.log(result);
+		alertSuccess(poolName, window.lang['successWithdrawingFunds'] );
+		updatePage();
 		
+	}).catch( (err) => {
+		//console.log(err);
+		alertError(poolName, window.lang['errorWithdrawingFunds'] );
 	});
 }
 
@@ -345,14 +346,14 @@ function transferFunds(poolName){
 		return;
 	}
 	
-	console.log("Transferring KTC: "+value*10**18);
-	tokenContract.transferShare(toHex(poolName), value * 10**18, toAddress, {from: myAccount, gas: 900000}, function( err, result) {
-		if (err) alertError(poolName, window.lang['errorTransferringFunds'] );
-		else {
-			console.log(result);
-			alertSuccess(poolName, window.lang['successTransferringFunds'] );
-			updatePage();
-		}
+	console.log("Transferring KTC: "+web3.utils.toWei(value, 'ether'));
+	tokenContract.methods.transferShare(web3.utils.utf8ToHex(poolName), web3.utils.toWei(value, 'ether'), toAddress).send({from: myAccount, gas: 900000}).then( (result) => {
+		console.log(result);
+		alertSuccess(poolName, window.lang['successTransferringFunds'] );
+		updatePage();
+	}).catch( (err) => {
+		console.log(err);
+		alertError(poolName, window.lang['errorTransferringFunds'] );
 	});
 	
 }
