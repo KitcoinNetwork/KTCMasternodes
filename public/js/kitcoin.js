@@ -89,16 +89,16 @@ async function getKTCBalance() {
 		$("#tier1n").text(numTier);
 	});
 	var tier2n = tokenContract.methods.tierNumber(1).call().then( (numTier) => {
-		$("#tier1n").text(numTier);
+		$("#tier2n").text(numTier);
 	});
 	var tier3n = tokenContract.methods.tierNumber(2).call().then( (numTier) => {
-		$("#tier1n").text(numTier);
+		$("#tier3n").text(numTier);
 	});
 	var tier4n = tokenContract.methods.tierNumber(3).call().then( (numTier) => {
-		$("#tier1n").text(numTier);
+		$("#tier4n").text(numTier);
 	});
 	var tier5n = tokenContract.methods.tierNumber(4).call().then( (numTier) => {
-		$("#tier1n").text(numTier);
+		$("#tier5n").text(numTier);
 	});
 
 }
@@ -232,14 +232,14 @@ async function listMyPools(){
 function alertError(appendToDiv, errorMessage){
 	$('#error-alert').remove();
 	$('#'+appendToDiv).append('<div class="alert alert-danger" id="error-alert">'+errorMessage+'</div>');
-	$("#error-alert").fadeTo(2000, 500).slideUp(500, function(){
+	$("#error-alert").fadeTo(8000, 500).slideUp(500, function(){
 		$("#error-alert").slideUp(500);
 	});
 }
 function alertSuccess(appendToDiv, errorMessage){
 	$('#success-alert').remove();
 	$('#'+appendToDiv).append('<div class="alert alert-success" id="success-alert">'+errorMessage+'</div>');
-	$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+	$("#success-alert").fadeTo(8000, 500).slideUp(500, function(){
 		$("#success-alert").slideUp(500);
 	});
 }
