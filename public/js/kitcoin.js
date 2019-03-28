@@ -21,6 +21,7 @@ window.addEventListener('load', async () => {
     } else {
         console.log('No Web3 Detected... using HTTP Provider')
         window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+        //window.web3 = new Web3(new Web3.providers.HttpProvider("http://47.244.152.188/zlMOcq5cppnTUPlMz5wUCOK9udioH7LG"));
     }
 	//web3.eth.getAccounts(console.log);
 	console.log(web3.version);
@@ -44,14 +45,14 @@ function fromHex(hex){
     str = hex
     console.log('invalid hex input: ' + hex)
   }
-  return str.replace(/\0+$/, '')
+  return str.replace(/\0+$/, '').replace(' ','_');
 }
 
 
 function toHex(str){
 	var hex;
   try{
-    hex = unescape(encodeURIComponent(str))
+    hex = unescape(encodeURIComponent(str.replace('_',' ')))
     .split('').map(function(v){
       return v.charCodeAt(0).toString(16)
     }).join('')
@@ -249,8 +250,8 @@ function createPool(){
 	var name = document.getElementById("createPool").value;
 	//forbid special chars cuz it interfers with the frontend
 	var match = /[*?\-+^${}[\]().|\\\'\"\/\&`~%;,:!_@<>=§#²]/.exec(name);
-	if (match) {
-		console.log(match.index);
+	if ( ! /^[a-z0-9\u4e00-\u9fa5]+$/i.test(name) ) {
+		//console.log(match.index);
 		alertError("createAPool", "Bad characters");
 		return;
 	}
