@@ -72,9 +72,9 @@ function toHex(str){
 function connectContract(){
 	if ( tokenContract == null ){
 		//Prod address
-		//var contractAddress = "0x9951B16b68A7c54456726244370d03264D2f6C72"
+		var contractAddress = "0x9951B16b68A7c54456726244370d03264D2f6C72"
 		//Dev address 
-		var contractAddress = "0x77c7C8C60283eBC3774aE4fCBe4F25530E4edC8A";
+		//var contractAddress = "0x77c7C8C60283eBC3774aE4fCBe4F25530E4edC8A";
 		var contractABI = human_standard_token_abi;
 		tokenContract = web3.eth.contract(contractABI).at(contractAddress);
 	}
