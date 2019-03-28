@@ -2,6 +2,7 @@ var tokenContract;
 var userAccount;
 var tierROI = [ 20, 10, 8, 6, 5, 0];
 var myAccount;
+var maxGas = 4900000;
 window.addEventListener('load', async () => {
     if (window.ethereum) {
             window.web3 = new Web3(ethereum);
@@ -125,7 +126,7 @@ function claimDividends(poolName){
 	//connectContract();
 	//console.log("Claim dividends at block: "+(await web3.eth.getBlockNumber()));
 	
-	tokenContract.withdrawPoolDividends(toHex(poolName), {from: myAccount, gas: 900000}, function (err, res) {
+	tokenContract.withdrawPoolDividends(toHex(poolName), {from: myAccount, gas: maxGas}, function (err, res) {
 		if (err) {
 			console.log(err);
 			alertError(poolName, window.lang['errorDividends'] );
@@ -256,7 +257,7 @@ function createPool(){
 		return;
 	}
 	
-	tokenContract.createPool(toHex(name), {from: myAccount, gas: 900000}, function(err, result) {
+	tokenContract.createPool(toHex(name), {from: myAccount, gas: maxGas}, function(err, result) {
 		if (err) alertError("createAPool", window.lang['errorCreatingPool'] );
 		else {
 			alertSuccess("createAPool", window.lang['successCreatingPool'] );
@@ -284,7 +285,7 @@ function addFunds(poolName){
 		return;
 	}
 	
-	tokenContract.joinPool(toHex(poolName), value*10**18, {from: myAccount, gas: 900000}, function (err, result) {
+	tokenContract.joinPool(toHex(poolName), value*10**18, {from: myAccount, gas: maxGas}, function (err, result) {
 		//console.log(result);
 		if (err) {
 			console.log(err);
@@ -314,7 +315,7 @@ function removeFunds(poolName){
 		return;
 	}
 	
-	tokenContract.leavePool(toHex(poolName), value*10**18, {from: myAccount, gas: 900000}, function (err, result) {
+	tokenContract.leavePool(toHex(poolName), value*10**18, {from: myAccount, gas: maxGas}, function (err, result) {
 		if (err) alertError(poolName, window.lang['errorWithdrawingFunds'] );
 		else {
 			alertSuccess(poolName, window.lang['successWithdrawingFunds'] );
@@ -347,7 +348,7 @@ function transferFunds(poolName){
 	}
 	
 	console.log("Transferring KTC: "+value*10**18);
-	tokenContract.transferShare(toHex(poolName), value * 10**18, toAddress, {from: myAccount, gas: 900000}, function( err, result) {
+	tokenContract.transferShare(toHex(poolName), value * 10**18, toAddress, {from: myAccount, gas: maxGas}, function( err, result) {
 		if (err) alertError(poolName, window.lang['errorTransferringFunds'] );
 		else {
 			console.log(result);
