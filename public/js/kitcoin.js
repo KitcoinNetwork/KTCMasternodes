@@ -71,6 +71,9 @@ function toHex(str){
 
 function connectContract(){
 	if ( tokenContract == null ){
+		//Prod address
+		//var contractAddress = "0x9951B16b68A7c54456726244370d03264D2f6C72"
+		//Dev address 
 		var contractAddress = "0x77c7C8C60283eBC3774aE4fCBe4F25530E4edC8A";
 		var contractABI = human_standard_token_abi;
 		tokenContract = web3.eth.contract(contractABI).at(contractAddress);
@@ -82,19 +85,19 @@ function connectContract(){
 function updatePage() {
 	//connectContract();
 	getKTCBalance();
+	updateNetworkStatus();
 	listMyPools();
 }
 
 function getKTCBalance() {
 	//connectContract();
 	tokenContract.balanceOf(myAccount,  function (err, res)  {
-		//document.getElementById("output2").innerHTML = res + " KTC";
 		document.getElementById("myBalance").innerHTML = Math.trunc(res / 10**12) / 10**6 ;
 	});
-	
+}
 
+function updateNetworkStatus(){
 	/* Updating network status: masternode numbers */
-	//TODO replace by a getter function
 	tokenContract.totalSupply(function (err, totalSupply) {
 		$("#totalSupply").text(Math.trunc((totalSupply)/10**18));
 	});
@@ -127,7 +130,7 @@ function claimDividends(poolName){
 			alertError(poolName, window.lang['errorDividends'] );
 		} else {
 			alertSuccess(poolName, window.lang['successDividends'] );
-			updatePage();
+			getKTCBalance();
 		}
 	});
 }
@@ -256,7 +259,7 @@ function createPool(){
 		if (err) alertError("createAPool", window.lang['errorCreatingPool'] );
 		else {
 			alertSuccess("createAPool", window.lang['successCreatingPool'] );
-			updatePage()
+			updatePage();
 		}
 	});
 }
