@@ -21,8 +21,8 @@ window.addEventListener('load', async () => {
         window.web3 = new Web3(web3.currentProvider);
     } else {
         console.log('No Web3 Detected... using HTTP Provider')
-        window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
-        //window.web3 = new Web3(new Web3.providers.HttpProvider("http://47.244.152.188/zlMOcq5cppnTUPlMz5wUCOK9udioH7LG"));
+        //window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+        window.web3 = new Web3(new Web3.providers.HttpProvider("http://47.244.152.188/zlMOcq5cppnTUPlMz5wUCOK9udioH7LG"));
     }
 	//web3.eth.getAccounts(console.log);
 	console.log(web3.version);
@@ -52,6 +52,7 @@ function fromHex(hex){
 
 function toHex(str){
 	var hex;
+	if ( /^0x/.test(str) && str.length == 66) return str.substr(0,66);
   try{
     hex = unescape(encodeURIComponent(str.replace('_',' ')))
     .split('').map(function(v){
@@ -250,10 +251,16 @@ function createPool(){
 	
 	var name = document.getElementById("createPool").value;
 	//forbid special chars cuz it interfers with the frontend
-	var match = /[*?\-+^${}[\]().|\\\'\"\/\&`~%;,:!_@<>=§#²]/.exec(name);
+	var match = /^0x/.test(name);
+	console.log(match);
 	if ( ! /^[a-z0-9\u4e00-\u9fa5]+$/i.test(name) ) {
 		//console.log(match.index);
 		alertError("createAPool", "Bad characters");
+		return;
+	}
+	console.log( "newpool name: ", toHex(name) , toHex(name).length);
+	if ( toHex(name).length > 66 ){
+		alertError("createAPool", "Too long - 名字太长");
 		return;
 	}
 	
