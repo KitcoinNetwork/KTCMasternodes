@@ -46,7 +46,7 @@ function fromHex(hex){
     str = hex
     console.log('invalid hex input: ' + hex)
   }
-  return str.replace(/\0+$/, '').replace(' ','_');
+  return str.replace(/\0+$/, '').replace(/ /g,'_');
 }
 
 
@@ -54,7 +54,7 @@ function toHex(str){
 	var hex;
 	if ( /^0x/.test(str) && str.length == 66) return str.substr(0,66);
   try{
-    hex = unescape(encodeURIComponent(str.replace('_',' ')))
+    hex = unescape(encodeURIComponent(str.replace(/_/g,' ')))
     .split('').map(function(v){
       return v.charCodeAt(0).toString(16)
     }).join('')
